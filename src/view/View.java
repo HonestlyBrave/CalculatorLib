@@ -7,6 +7,16 @@ package view;
 public interface View {
 
     /**
+     * Make the view visible.
+     */
+    public void setVisible();
+
+    /**
+     * Set the initial focus in the view.
+     */
+    public void setFocus();
+
+    /**
      * Get the view's user display control text.
      *
      * @return display text
