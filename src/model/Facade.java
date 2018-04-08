@@ -25,6 +25,16 @@ public class Facade {
     private static View view;
 
     /**
+     * After injecting your spring bean, use this method to set it for the
+     * model.
+     *
+     * @param aView
+     */
+    public static void setView(View aView) {
+        view = aView;
+    }
+
+    /**
      * Main Equation for calculation using elements and operators. Elements are
      * base expressions, equations(parentheses), scalars and a singleton memory.
      */
@@ -60,16 +70,6 @@ public class Facade {
      * Use commas as separator and eliminate extra zeros after decimal.
      */
     private static final DecimalFormat FINE = new DecimalFormat("");
-
-    /**
-     * Constructor to inject View.
-     *
-     * @param aView
-     */
-    @Autowired
-    public Facade(View aView) {
-        view = aView;
-    }
 
     /**
      * Add a value to memory.
