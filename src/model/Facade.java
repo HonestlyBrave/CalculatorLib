@@ -7,9 +7,7 @@ import java.util.Deque;
 import javax.swing.JOptionPane;
 import model.operator.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import view.View;
 
 /**
@@ -17,15 +15,8 @@ import view.View;
  *
  * @author Muhammad Diallo Thomas - muhammaddiallo.thomas@gmail.com
  */
-@Service("facade")
+@Component("facade")
 public class Facade {
-
-    /**
-     * Spring context.
-     */
-    private static final ApplicationContext CTX =
-            new ClassPathXmlApplicationContext(
-                    "classpath:/view/beans.xml");
 
     /**
      * View Class object.
@@ -73,10 +64,11 @@ public class Facade {
     /**
      * Constructor to inject View.
      *
+     * @param aView
      */
     @Autowired
-    public Facade() {
-        view = CTX.getBean(View.class);
+    public Facade(View aView) {
+        view = aView;
     }
 
     /**
