@@ -1,5 +1,7 @@
 package view;
 
+import model.Facade;
+
 /**
  *
  * @author Muhammad Diallo Thomas - muhammaddiallo.thomas@gmail.com
@@ -48,6 +50,13 @@ public interface View {
         String newText = text.isEmpty() ? "" : text.substring(0, textLen - 1);
 
         setDisplay(newText);
+    }
+
+    /**
+     * Set the Facade's view. Be sure to set the view once only.
+     */
+    default public void setCalculatorViewer() {
+        Facade.setView(this);
     }
 
 }
