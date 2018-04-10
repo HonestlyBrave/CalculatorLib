@@ -40,6 +40,14 @@ public interface View {
     /**
      * Remove last character input.
      */
-    public void undoDisplay();
+    default public void undoDisplay() {
+        String text = getDisplay();
+        int textLen = text.length();
+
+        // Set empty if empty or get all characters -1(last entry).
+        String newText = text.isEmpty() ? "" : text.substring(0, textLen - 1);
+
+        setDisplay(newText);
+    }
 
 }
