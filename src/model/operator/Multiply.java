@@ -14,6 +14,7 @@ public class Multiply implements Operator {
      */
     public static final String OPERATOR = "ˣ";
 
+    // <editor-fold defaultstate="collapsed" desc="Public methods. Click on + sign to show.">
     @Override
     public double calculate(Element x1, Element x2) {
         return x1.evaluate() * x2.evaluate();
@@ -27,4 +28,5 @@ public class Multiply implements Operator {
     public String toString() {
         return OPERATOR;
     }
+    // </editor-fold>
 }

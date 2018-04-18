@@ -9,6 +9,7 @@ import java.text.DecimalFormat;
  */
 public class Scalar implements Element {
 
+    // <editor-fold defaultstate="collapsed" desc="Private attributes. Click on + sign to show.">
     /**
      * Number.
      */
@@ -18,7 +19,9 @@ public class Scalar implements Element {
      * Use commas as separator and eliminate extra zeros after decimal.
      */
     private final DecimalFormat FINE = new DecimalFormat("");
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Constructor. Click on + sign to show.">
     /**
      * Default constructor.
      *
@@ -27,7 +30,9 @@ public class Scalar implements Element {
     public Scalar(double number) {
         this.number = number;
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Public methods. Click on + sign to show.">
     /**
      *
      * @return number
@@ -57,4 +62,5 @@ public class Scalar implements Element {
     public String toString() {
         return FINE.format(number);
     }
+    // </editor-fold>
 }

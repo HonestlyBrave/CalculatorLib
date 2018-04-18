@@ -9,29 +9,11 @@ import java.text.DecimalFormat;
  */
 public class Memory implements Element {
 
+    // <editor-fold defaultstate="collapsed" desc="Singleton. Click on + sign to show.">
     /**
      * Singleton INSTANCE of Memory class.
      */
     private static final Memory INSTANCE = getInstance();
-
-    /**
-     * Current value stored in memory.
-     */
-    private double currentValue;
-
-    /**
-     * Use commas as separator and eliminate extra zeros after decimal.
-     */
-    private final DecimalFormat FINE;
-
-    /**
-     * Private singleton constructor.
-     *
-     */
-    private Memory() {
-        this.currentValue = 0;
-        this.FINE = new DecimalFormat("");
-    }
 
     /**
      * Singleton design pattern.
@@ -41,13 +23,38 @@ public class Memory implements Element {
     public static Memory getInstance() {
         return INSTANCE == null ? new Memory() : INSTANCE;
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Private attributes. Click on + sign to show.">
+    /**
+     * Current value stored in memory.
+     */
+    private double currentValue;
+
+    /**
+     * Use commas as separator and eliminate extra zeros after decimal.
+     */
+    private final DecimalFormat FINE;
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Private constructor. Click on + sign to show.">
+    /**
+     * Private singleton constructor.
+     *
+     */
+    private Memory() {
+        this.currentValue = 0;
+        this.FINE = new DecimalFormat("");
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Public methods. Click on + sign to show.">
     /**
      *
      * @param value to add to currentValue
      */
     public void add(double value) {
-        this.currentValue = this.currentValue + value;
+        this.currentValue += value;
     }
 
     /**
@@ -55,7 +62,7 @@ public class Memory implements Element {
      * @param value to subtract from currentValue
      */
     public void subtract(double value) {
-        this.currentValue = this.currentValue - value;
+        this.currentValue -= value;
     }
 
     /**
@@ -77,4 +84,5 @@ public class Memory implements Element {
     public String toString() {
         return FINE.format(currentValue);
     }
+    // </editor-fold>
 }

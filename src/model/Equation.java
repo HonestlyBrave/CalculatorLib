@@ -8,14 +8,14 @@ import model.operator.*;
 /**
  * This is the composite class which is composed of elements(Equations,
  * BaseExpressions and Scalars) and operators. These items are collected in
- * EQUATIONITEMS then simplified using the Simplify class. The resulting last
- * Element is then evaluated for the solution. Enumerator created to control the
- * opening and closing of each inner equation(parentheses).
+ * EQUATIONITEMS then simplified. The resulting last Element is then evaluated
+ * for the solution..
  *
  * @author Muhammad Diallo Thomas - muhammaddiallo.thomas@gmail.com
  */
 public class Equation implements Element {
 
+    // <editor-fold defaultstate="collapsed" desc="Private attributes. Click on + sign to show.">
     /**
      * List of items within this Equation(parentheses).
      */
@@ -45,7 +45,9 @@ public class Equation implements Element {
      * Current input.
      */
     private String input = "";
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Constructor. Click on + sign to show.">
     /**
      * Default constructor which sets the various initial states of statuses.
      */
@@ -56,7 +58,9 @@ public class Equation implements Element {
         this.eleCount = 0;
         this.memory = Memory.getInstance();
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Public methods. Click on + sign to show.">
     /**
      * Add a Scalar element.
      *
@@ -204,14 +208,6 @@ public class Equation implements Element {
     }
 
     /**
-     *
-     * @return current memory value
-     */
-    public double evaluateMemory() {
-        return memory.evaluate();
-    }
-
-    /**
      * Set memory to zero.
      */
     public void clearMemory() {
@@ -270,35 +266,6 @@ public class Equation implements Element {
     }
 
     /**
-     * Check whether this Equation has its first operand.
-     *
-     * @return boolean
-     */
-    public boolean hasFirstOperand() {
-        return this.hasFirstOperand;
-    }
-
-    /**
-     * Check all Equations whether the active Equation has its first operand.
-     *
-     * @return boolean
-     */
-    public boolean checkAll4FirstOperand() {
-        return ((hasFirstOperand() && !isThereAnOpenEquation())
-                || (isThereAnOpenEquation()
-                && getLastEquationItem().checkAll4FirstOperand()));
-    }
-
-    /**
-     * Check this Equation's solvability with elements to operators ratio.
-     *
-     * @return boolean
-     */
-    public boolean isSolvable() {
-        return this.eleCount == this.opCount + 1;
-    }
-
-    /**
      * Check all Equations whether the active Equation is unsolvable.
      *
      * @return boolean
@@ -319,15 +286,6 @@ public class Equation implements Element {
     }
 
     /**
-     * Check if last item is a closed Equation.
-     *
-     * @return boolean
-     */
-    public boolean lastIsClosedEquation() {
-        return (lastIsEquation() && !isThereAnOpenEquation());
-    }
-
-    /**
      * Check whether last item of the active Equation is a closed Equation.
      *
      * @return boolean
@@ -335,22 +293,6 @@ public class Equation implements Element {
     public boolean nestedLastItemIsClosedEquation() {
         return (lastIsClosedEquation() || (isThereAnOpenEquation()
                 && getLastEquationItem().nestedLastItemIsClosedEquation()));
-    }
-
-    /**
-     *
-     * @return Equation
-     */
-    public Equation getLastEquationItem() {
-        return (Equation) getLastItem();
-    }
-
-    /**
-     *
-     * @return Element
-     */
-    public Element getLastElementItem() {
-        return (Element) getLastItem();
     }
 
     /**
@@ -374,31 +316,6 @@ public class Equation implements Element {
     }
 
     /**
-     * Check if last item is an Equation.
-     *
-     * @return boolean
-     */
-    public boolean lastIsEquation() {
-        if (itemListIsEmpty()) {
-            return false;
-        }
-        return (getLastItem().getClass().equals(Equation.class));
-    }
-
-    /**
-     * Check if last item is an Operator.
-     *
-     * @return boolean
-     */
-    public boolean lastIsOperator() {
-        if (itemListIsEmpty()) {
-            return false;
-        }
-        return (getLastItem().getClass()
-                .getInterfaces()[0].equals(Operator.class));
-    }
-
-    /**
      * Check whether last item of the active Equation is an Operator.
      *
      * @return boolean
@@ -409,18 +326,6 @@ public class Equation implements Element {
     }
 
     /**
-     * Check if last item is a Scalar.
-     *
-     * @return boolean
-     */
-    public boolean lastIsScalar() {
-        if (itemListIsEmpty()) {
-            return false;
-        }
-        return (getLastItem().getClass().equals(Scalar.class));
-    }
-
-    /**
      * Check whether last item of the active Equation is a Scalar.
      *
      * @return boolean
@@ -428,18 +333,6 @@ public class Equation implements Element {
     public boolean nestedLastItemIsScalar() {
         return (lastIsScalar() || (isThereAnOpenEquation()
                 && getLastEquationItem().nestedLastItemIsScalar()));
-    }
-
-    /**
-     * Return last object in an Equation's list.
-     *
-     * @return an Equation's last list item
-     */
-    public Object getLastItem() {
-        if (itemListIsEmpty()) {
-            return null;
-        }
-        return EQUATIONITEMS.get(EQUATIONITEMS.size() - 1);
     }
 
     /**
@@ -466,6 +359,91 @@ public class Equation implements Element {
         } else {
             getLastEquationItem().undoOperation();
         }
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Private methods. Click on + sign to show.">
+    /**
+     * Check this Equation's solvability with elements to operators ratio.
+     *
+     * @return boolean
+     */
+    private boolean isSolvable() {
+        return this.eleCount == this.opCount + 1;
+    }
+
+    /**
+     * Check if last item is a closed Equation.
+     *
+     * @return boolean
+     */
+    private boolean lastIsClosedEquation() {
+        return (lastIsEquation() && !isThereAnOpenEquation());
+    }
+
+    /**
+     *
+     * @return Equation
+     */
+    private Equation getLastEquationItem() {
+        return (Equation) getLastItem();
+    }
+
+    /**
+     *
+     * @return Element
+     */
+    private Element getLastElementItem() {
+        return (Element) getLastItem();
+    }
+
+    /**
+     * Check if last item is an Equation.
+     *
+     * @return boolean
+     */
+    private boolean lastIsEquation() {
+        if (itemListIsEmpty()) {
+            return false;
+        }
+        return (getLastItem().getClass().equals(Equation.class));
+    }
+
+    /**
+     * Check if last item is an Operator.
+     *
+     * @return boolean
+     */
+    private boolean lastIsOperator() {
+        if (itemListIsEmpty()) {
+            return false;
+        }
+        return (getLastItem().getClass()
+                .getInterfaces()[0].equals(Operator.class));
+    }
+
+    /**
+     * Check if last item is a Scalar.
+     *
+     * @return boolean
+     */
+    private boolean lastIsScalar() {
+        if (itemListIsEmpty()) {
+            return false;
+        }
+        return (getLastItem().getClass().equals(Scalar.class));
+    }
+
+    /**
+     * Return last object in an Equation's list.
+     *
+     * @return an Equation's last list item
+     */
+    private Object getLastItem() {
+        if (itemListIsEmpty()) {
+            return null;
+        }
+        return EQUATIONITEMS.get(EQUATIONITEMS.size() - 1);
     }
 
     /**
@@ -524,4 +502,5 @@ public class Equation implements Element {
         list.remove(index);
         list.remove(index);
     }
+    // </editor-fold>
 }
