@@ -18,15 +18,15 @@ import view.View;
 @Component("facade")
 public class Facade {
 
+    // <editor-fold defaultstate="collapsed" desc="View attribute and related methods. Click on + sign to show.">
     /**
-     * View Class object.
+     * View Class object that is set by the implementor.
      */
     @Autowired
     private static View view;
 
     /**
-     * After injecting your spring bean, use this method to set it for the
-     * model.
+     * Use this method to set the view.
      *
      * @param aView
      */
@@ -34,6 +34,40 @@ public class Facade {
         view = aView;
     }
 
+    /**
+     * Synchronize machine display with user display.
+     */
+    private static void synchMachineDisplay() {
+        displayText = view.getDisplay();
+    }
+
+    /**
+     * Set user display.
+     *
+     * @param text
+     */
+    private static void setUserDisplay(String text) {
+        view.setDisplay(text);
+    }
+
+    /**
+     * Update user display.
+     *
+     * @param text
+     */
+    private static void updateUserDisplay(String text) {
+        view.updateDisplay(text);
+    }
+
+    /**
+     * Undo user display.
+     */
+    private static void undoUserDisplay() {
+        view.undoDisplay();
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Private attributes. Click on + sign to show.">
     /**
      * Main Equation for calculation using elements and operators. Elements are
      * base expressions, equations(parentheses), scalars and a singleton memory.
@@ -70,7 +104,9 @@ public class Facade {
      * Use commas as separator and eliminate extra zeros after decimal.
      */
     private static final DecimalFormat FINE = new DecimalFormat("");
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Core public methods. Click on + sign to show.">
     /**
      * Add a value to memory.
      */
@@ -409,21 +445,16 @@ public class Facade {
     }
 
     /**
-     * Get the executed commands collection.
+     * Literal user input between operations.
      *
-     * @return list of commands for undo operations
+     * @param latestInput literal user input
      */
-    public static Deque<Command> getCOMANDS() {
-        return COMANDS;
-    }
-
-    /**
-     * Pop a command from the queue.
-     *
-     * @return a command for undo operations
-     */
-    public static Command popComand() {
-        return COMANDS.pop();
+    public static void updateInput(String latestInput) {
+        PRIMARY.updateInput(latestInput);
+        if (RemoveAnswerFromDisplay()) {
+            setUserDisplay("");
+        }
+        updateUserDisplay(latestInput);
     }
 
     /**
@@ -439,7 +470,7 @@ public class Facade {
      * Retrieve an executed command and execute its undo method.
      */
     public static void undo() {
-        if (!getCOMANDS().isEmpty()) {
+        if (!getComands().isEmpty()) {
             popComand().undo();
         } else {
             JOptionPane.showMessageDialog(null, "Nothing to undo.",
@@ -516,73 +547,24 @@ public class Facade {
         PRIMARY = (Equation) UNDOCOMANDS.pop();
     }
 
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Core private methods. Click on + sign to show.">
     /**
-     * Literal user input between operations.
+     * Trim display data as needed to return value only.
      *
-     * @param latestInput literal user input
+     * @return value substring of user display
      */
-    public static void updateInput(String latestInput) {
-        PRIMARY.updateInput(latestInput);
-        if (RemoveAnswerFromDisplay()) {
-            setUserDisplay("");
-        }
-        updateUserDisplay(latestInput);
-    }
+    private static String getCleanString() {
+        synchMachineDisplay();
 
-    /**
-     *
-     * @return answer
-     */
-    public static String getAnswer() {
-        return answer;
-    }
+        String cleanString;
 
-    /**
-     * Start a new calculation with current answer.
-     *
-     * @return boolean
-     */
-    public static boolean answerNotEmpty() {
-        return (!answer.isEmpty() && PRIMARY.itemListIsEmpty()
-                && PRIMARY.getInput().isEmpty());
-    }
+        // Find index of space before value.
+        int index = displayText.lastIndexOf(" ");
+        // Take everything after index.
+        cleanString = displayText.substring(index + 1);
 
-    /**
-     * Is Equation list empty, while answer is not and input has no more than
-     * one character.
-     *
-     * @return boolean
-     */
-    public static boolean RemoveAnswerFromDisplay() {
-        return (!answer.isEmpty() && PRIMARY.itemListIsEmpty()
-                && PRIMARY.getInput().length() == 1);
-    }
-
-    /**
-     * Check current equation for illegal state before adding new operator.
-     *
-     * @return boolean
-     */
-    public static boolean operatorNotAllowed() {
-        return ((PRIMARY.itemListIsEmpty() && bothInputAnswerEmpty())
-                || (PRIMARY.nestedEquationEmpty()
-                && PRIMARY.getInput().isEmpty())
-                || (PRIMARY.nestedLastItemIsOperator()
-                && PRIMARY.getInput().isEmpty()));
-    }
-
-    /**
-     * Check all Equations illegal state before closing.
-     *
-     * @return boolean
-     */
-    public static boolean cannotCloseParaNow() {
-        return (PRIMARY.itemListIsEmpty()
-                || !PRIMARY.isThereAnOpenEquation()
-                || (PRIMARY.nestedLastItemIsOperator() && PRIMARY.getInput()
-                .isEmpty())
-                || (PRIMARY.getInput().isEmpty()
-                && PRIMARY.nestedEquationEmpty()));
+        return cleanString;
     }
 
     /**
@@ -612,24 +594,6 @@ public class Facade {
     }
 
     /**
-     * Trim display data as needed to return value only.
-     *
-     * @return value substring of user display
-     */
-    private static String getCleanString() {
-        synchMachineDisplay();
-
-        String cleanString;
-
-        // Find index of space before value.
-        int index = displayText.lastIndexOf(" ");
-        // Take everything after index.
-        cleanString = displayText.substring(index + 1);
-
-        return cleanString;
-    }
-
-    /**
      * Validate a new value or whether the previous item was an Equation or
      * Scalar. The exception for no Scalar value before an operator.
      *
@@ -650,6 +614,16 @@ public class Facade {
     }
 
     /**
+     * Start a new calculation with current answer.
+     *
+     * @return boolean
+     */
+    private static boolean answerNotEmpty() {
+        return (!answer.isEmpty() && PRIMARY.itemListIsEmpty()
+                && PRIMARY.getInput().isEmpty());
+    }
+
+    /**
      * True if both attributes are empty.
      *
      * @return boolean
@@ -659,37 +633,45 @@ public class Facade {
     }
 
     /**
-     * Synchronize machine display with user display.
-     */
-    private static void synchMachineDisplay() {
-        displayText = view.getDisplay();
-    }
-
-    /**
-     * Set user display.
+     * Is Equation list empty, while answer is not and input has no more than
+     * one character.
      *
-     * @param text
+     * @return boolean
      */
-    private static void setUserDisplay(String text) {
-        view.setDisplay(text);
+    private static boolean RemoveAnswerFromDisplay() {
+        return (!answer.isEmpty() && PRIMARY.itemListIsEmpty()
+                && PRIMARY.getInput().length() == 1);
     }
 
     /**
-     * Update user display.
+     * Check current equation for illegal state before adding new operator.
      *
-     * @param text
+     * @return boolean
      */
-    private static void updateUserDisplay(String text) {
-        view.updateDisplay(text);
+    private static boolean operatorNotAllowed() {
+        return ((PRIMARY.itemListIsEmpty() && bothInputAnswerEmpty())
+                || (PRIMARY.nestedEquationEmpty()
+                && PRIMARY.getInput().isEmpty())
+                || (PRIMARY.nestedLastItemIsOperator()
+                && PRIMARY.getInput().isEmpty()));
     }
 
     /**
-     * Undo user display.
+     * Check all Equations illegal state before closing.
+     *
+     * @return boolean
      */
-    private static void undoUserDisplay() {
-        view.undoDisplay();
+    private static boolean cannotCloseParaNow() {
+        return (PRIMARY.itemListIsEmpty()
+                || !PRIMARY.isThereAnOpenEquation()
+                || (PRIMARY.nestedLastItemIsOperator() && PRIMARY.getInput()
+                .isEmpty())
+                || (PRIMARY.getInput().isEmpty()
+                && PRIMARY.nestedEquationEmpty()));
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Private methods. Click on + sign to show.">
     /**
      * Set machine view and user/machine input.
      *
@@ -698,6 +680,24 @@ public class Facade {
     private static void setMachineInputOutput(String text) {
         output = text;
         PRIMARY.setInput(removeCommas(text));
+    }
+
+    /**
+     * Get the executed commands collection.
+     *
+     * @return list of commands for undo operations
+     */
+    private static Deque<Command> getComands() {
+        return COMANDS;
+    }
+
+    /**
+     * Pop a command from the queue.
+     *
+     * @return a command for undo operations
+     */
+    private static Command popComand() {
+        return COMANDS.pop();
     }
 
     /**
@@ -741,4 +741,5 @@ public class Facade {
     private static double parseCommas(String number) {
         return Double.parseDouble(removeCommas(number));
     }
+    // </editor-fold>
 }
