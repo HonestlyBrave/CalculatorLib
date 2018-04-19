@@ -546,8 +546,8 @@ public class Facade {
     public static void undoClearMem() {
         PRIMARY = (Equation) UNDOCOMANDS.pop();
     }
-
     // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="Core private methods. Click on + sign to show.">
     /**
      * Trim display data as needed to return value only.
