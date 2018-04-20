@@ -114,6 +114,12 @@ public class Facade {
         // Save state for undo
         UNDOCOMANDS.push(PRIMARY);
 
+        if (PRIMARY.nestedLastItemIsExponent()) {
+            PRIMARY.addMemory(PRIMARY.getLastElementItem().evaluate());
+            PRIMARY.setInput("");
+            return;
+        }
+
         if (validateNewMemVal()) {
             PRIMARY.addMemory(parseCommas(getCleanString()));
             PRIMARY.setInput("");
@@ -126,6 +132,12 @@ public class Facade {
     public static void subtractMemory() {
         // Save state for undo
         UNDOCOMANDS.push(PRIMARY);
+
+        if (PRIMARY.nestedLastItemIsExponent()) {
+            PRIMARY.addMemory(PRIMARY.getLastElementItem().evaluate());
+            PRIMARY.setInput("");
+            return;
+        }
 
         if (validateNewMemVal()) {
             PRIMARY.subtractMemory(parseCommas(getCleanString()));
@@ -222,12 +234,14 @@ public class Facade {
             PRIMARY.setInput(removeCommas(answer));
         }
 
-        if (verifyNewValueOrElement()) {
+        if (verifyNewValueOrSpecificElement()) {
             if (newInputAfterClosedEquation()) {
                 addMultiplySignAfterLastEquation();
             }
 
-            if (!PRIMARY.addInput() && !PRIMARY.nestedLastItemIsClosedEquation()) {
+            if (!PRIMARY.addInput()
+                    && !PRIMARY.nestedLastItemIsClosedEquation()
+                    && !PRIMARY.nestedLastItemIsExponent()) {
                 JOptionPane.showMessageDialog(null,
                         "You must enter a valid operand "
                         + "before choosing an operator.",
@@ -273,23 +287,21 @@ public class Facade {
             PRIMARY.setInput(removeCommas(answer));
         }
 
-        if (verifyNewValueOrElement()) {
+        if (verifyNewValueOrSpecificElement()) {
             if (newInputAfterClosedEquation()) {
                 addMultiplySignAfterLastEquation();
             }
-
-            String superscript;
+            if (newInputAfterExponent()) {
+                addMultiplySignAfterLastExponent();
+            }
 
             if (isSquare) {
                 PRIMARY.activateSquare();
-                superscript = "²";
+                output = "²";
             } else {
                 PRIMARY.activateCube();
-                superscript = "³";
+                output = "³";
             }
-
-            output = PRIMARY.getInput().isEmpty() ? ""
-                    : PRIMARY.getInput() + superscript;
 
             if (!PRIMARY.addInput() && !PRIMARY.nestedLastItemIsClosedEquation()) {
                 JOptionPane.showMessageDialog(null,
@@ -300,7 +312,7 @@ public class Facade {
             }
         }
 
-        updateUserDisplay(" " + output + " ");
+        updateUserDisplay(output);
         return true;
     }
 
@@ -318,7 +330,7 @@ public class Facade {
             PRIMARY.setInput(removeCommas(answer));
         }
 
-        if (validateNewVal() || PRIMARY.nestedLastItemIsClosedEquation()) {
+        if (verifyNewValueOrSpecificElement()) {
             if (newInputAfterClosedEquation()) {
                 addMultiplySignAfterLastEquation();
             }
@@ -552,7 +564,7 @@ public class Facade {
      *
      * @return boolean
      */
-    private static boolean verifyNewValueOrElement() {
+    private static boolean verifyNewValueOrSpecificElement() {
         return (validateNewVal() || PRIMARY.nestedLastItemIsClosedEquation()
                 || PRIMARY.nestedLastItemIsScalar()
                 || PRIMARY.nestedLastItemIsExponent());
@@ -565,6 +577,15 @@ public class Facade {
      */
     private static boolean newInputAfterClosedEquation() {
         return (validateNewVal() && PRIMARY.nestedLastItemIsClosedEquation());
+    }
+
+    /**
+     * True if there is new input and the last item is an Exponent.
+     *
+     * @return boolean
+     */
+    private static boolean newInputAfterExponent() {
+        return (validateNewVal() && PRIMARY.nestedLastItemIsExponent());
     }
 
     /**
@@ -674,6 +695,19 @@ public class Facade {
         String newinput = displayText.substring(tmp + 1);
         displayText = displayText.substring(0, tmp);
         displayText = displayText.concat(") ˣ " + newinput);
+        setUserDisplay(displayText);
+    }
+
+    /**
+     * Add literal "ˣ" to user display after exponent.
+     */
+    private static void addMultiplySignAfterLastExponent() {
+        synchMachineDisplay();
+        int tmp = displayText.lastIndexOf("²") != -1
+                ? displayText.lastIndexOf("²") : displayText.lastIndexOf("³");
+        String newinput = displayText.substring(tmp + 1);
+        displayText = displayText.substring(0, tmp + 1);
+        displayText = displayText.concat(" ˣ " + newinput);
         setUserDisplay(displayText);
     }
 

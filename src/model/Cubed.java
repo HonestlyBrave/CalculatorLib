@@ -1,5 +1,7 @@
 package model;
 
+import java.text.DecimalFormat;
+
 /**
  *
  * @author Muhammad Diallo Thomas - muhammaddiallo.thomas@gmail.com
@@ -10,7 +12,12 @@ public class Cubed implements Element {
     /**
      * Number.
      */
-    private double number;
+    private final double number;
+
+    /**
+     * Use commas as separator and eliminate extra zeros after decimal.
+     */
+    private final DecimalFormat FINE = new DecimalFormat("");
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructor. Click on + sign to show.">
@@ -40,7 +47,7 @@ public class Cubed implements Element {
      */
     @Override
     public String toString() {
-        return number + "³";
+        return FINE.format(number) + "³";
     }
     // </editor-fold>
 

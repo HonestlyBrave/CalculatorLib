@@ -534,7 +534,7 @@ public class Equation implements Element {
      *
      * @return Element
      */
-    private Element getLastElementItem() {
+    public Element getLastElementItem() {
         return (Element) getLastItem();
     }
 

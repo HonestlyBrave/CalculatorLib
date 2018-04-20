@@ -13,7 +13,7 @@ public class Scalar implements Element {
     /**
      * Number.
      */
-    private double number;
+    private final double number;
 
     /**
      * Use commas as separator and eliminate extra zeros after decimal.
@@ -33,22 +33,6 @@ public class Scalar implements Element {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Public methods. Click on + sign to show.">
-    /**
-     *
-     * @return number
-     */
-    public double getNumber() {
-        return number;
-    }
-
-    /**
-     *
-     * @param number value of this Scalar object
-     */
-    public void setNumber(double number) {
-        this.number = number;
-    }
-
     @Override
     public double evaluate() {
         return number;
