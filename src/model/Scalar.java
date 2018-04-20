@@ -11,7 +11,7 @@ public class Scalar implements Element {
 
     // <editor-fold defaultstate="collapsed" desc="Private attributes. Click on + sign to show.">
     /**
-     * Number.
+     * Number to be evaluated.
      */
     private final double number;
 
@@ -25,7 +25,7 @@ public class Scalar implements Element {
     /**
      * Default constructor.
      *
-     * @param number value of this Scalar object
+     * @param number to be used as value
      */
     public Scalar(double number) {
         this.number = number;

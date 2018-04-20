@@ -11,7 +11,8 @@ import org.springframework.stereotype.Component;
 import view.View;
 
 /**
- * Facade design pattern to compliment Command design pattern.
+ * Facade design pattern to compliment Command design pattern. The Facade is
+ * also responsible for adhering to math rules.
  *
  * @author Muhammad Diallo Thomas - muhammaddiallo.thomas@gmail.com
  */

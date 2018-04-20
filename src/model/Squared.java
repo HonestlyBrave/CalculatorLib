@@ -3,6 +3,7 @@ package model;
 import java.text.DecimalFormat;
 
 /**
+ * Leaf class of the math composite.
  *
  * @author Muhammad Diallo Thomas - muhammaddiallo.thomas@gmail.com
  */
@@ -10,7 +11,7 @@ public class Squared implements Element {
 
     // <editor-fold defaultstate="collapsed" desc="Private attributes. Click on + sign to show.">
     /**
-     * Number.
+     * Number to be evaluated.
      */
     private final double number;
 
@@ -24,7 +25,7 @@ public class Squared implements Element {
     /**
      * Default constructor.
      *
-     * @param number value of this Scalar object
+     * @param number to be squared
      */
     public Squared(double number) {
         this.number = number;
@@ -32,10 +33,6 @@ public class Squared implements Element {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Public methods. Click on + sign to show.">
-    /**
-     *
-     * @return number
-     */
     @Override
     public double evaluate() {
         return Math.pow(number, 2);

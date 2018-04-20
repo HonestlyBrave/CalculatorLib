@@ -6,10 +6,9 @@ import javax.swing.JOptionPane;
 import model.operator.*;
 
 /**
- * This is the composite class which is composed of elements(Equations,
- * BaseExpressions and Scalars) and operators. These items are collected in
- * EQUATIONITEMS then simplified. The resulting last Element is then evaluated
- * for the solution..
+ * This is the composite class which is composed of Elements and Operators.
+ * These items are collected in a list and then simplified. The resulting last
+ * Element is then evaluated for the solution.
  *
  * @author Muhammad Diallo Thomas - muhammaddiallo.thomas@gmail.com
  */
@@ -59,7 +58,7 @@ public class Equation implements Element {
 
     // <editor-fold defaultstate="collapsed" desc="Constructor. Click on + sign to show.">
     /**
-     * Default constructor which sets the various initial states of statuses.
+     * Default constructor which sets the various initial states of an Equation.
      */
     public Equation() {
         this.hasFirstOperand = false;
@@ -74,7 +73,7 @@ public class Equation implements Element {
 
     // <editor-fold defaultstate="collapsed" desc="Public methods. Click on + sign to show.">
     /**
-     * Add a Scalar element.
+     * Add a Scalar element to this Equation's item list.
      *
      * @param scalar element to add to list
      */
@@ -109,7 +108,7 @@ public class Equation implements Element {
     }
 
     /**
-     * Add a Squared element.
+     * Add a Squared element to this Equation's item list.
      *
      * @param squared element to add to list
      */
@@ -146,7 +145,7 @@ public class Equation implements Element {
     }
 
     /**
-     * Add a Cubed element.
+     * Add a Cubed element to this Equation's item list.
      *
      * @param cubed element to add to list
      */
@@ -183,7 +182,7 @@ public class Equation implements Element {
     }
 
     /**
-     * Add an operator.
+     * Add an operator to this Equation's item list
      *
      * @param operator element to add to list
      */
@@ -204,7 +203,7 @@ public class Equation implements Element {
     }
 
     /**
-     * Add an equation element.
+     * Add an equation(parentheses) element to this Equation's item list.
      *
      * @param equation element to add to list
      */
@@ -259,7 +258,7 @@ public class Equation implements Element {
     }
 
     /**
-     * Check all Equations for an open Equation then close it.
+     * Find the active Equation(parentheses) and close it.
      *
      */
     public void closeEquation() {
@@ -280,6 +279,7 @@ public class Equation implements Element {
     }
 
     /**
+     * Add to memory value.
      *
      * @param value to be added to current memory value
      */
@@ -288,6 +288,7 @@ public class Equation implements Element {
     }
 
     /**
+     * Subtract from memory value.
      *
      * @param value to be subtracted from current memory value
      */
@@ -339,14 +340,16 @@ public class Equation implements Element {
     }
 
     /**
+     * Manage current user input.
      *
-     * @return
+     * @return current input
      */
     public String getInput() {
         return input;
     }
 
     /**
+     * Manage current user input.
      *
      * @param newInput
      */
@@ -355,6 +358,7 @@ public class Equation implements Element {
     }
 
     /**
+     * Manage current user input.
      *
      * @param newInput
      */
@@ -363,21 +367,21 @@ public class Equation implements Element {
     }
 
     /**
-     * Set boolean for input will be Squared element.
+     * Set boolean that input will be a Squared element.
      */
     public void activateSquare() {
         this.squaredActive = true;
     }
 
     /**
-     * Set boolean for input will be Cubed element.
+     * Set boolean that input will be a Cubed element.
      */
     public void activateCube() {
         this.cubedActive = true;
     }
 
     /**
-     * Check all Equations whether the active Equation is unsolvable.
+     * Check whether the active Equation(parentheses) is unsolvable.
      *
      * @return boolean
      */
@@ -397,7 +401,8 @@ public class Equation implements Element {
     }
 
     /**
-     * Check whether last item of the active Equation is a closed Equation.
+     * Check whether last item of the active Equation(parentheses) is a closed
+     * Equation.
      *
      * @return boolean
      */
@@ -523,6 +528,7 @@ public class Equation implements Element {
     }
 
     /**
+     * Retrieve the last Equation(parentheses).
      *
      * @return Equation
      */
@@ -531,6 +537,7 @@ public class Equation implements Element {
     }
 
     /**
+     * Retrieve the last Element.
      *
      * @return Element
      */

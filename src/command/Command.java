@@ -1,7 +1,7 @@
 package command;
 
 /**
- * Interface to regroup all executable commands.
+ * Interface for executable commands.
  *
  * @author Muhammad Diallo Thomas - muhammaddiallo.thomas@gmail.com
  */

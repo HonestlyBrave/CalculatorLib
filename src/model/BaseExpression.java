@@ -3,7 +3,7 @@ package model;
 import model.operator.Operator;
 
 /**
- * Composite class of the math composite.
+ * Leaf class of the math composite.
  *
  * @author Muhammad Diallo Thomas - muhammaddiallo.thomas@gmail.com
  */
@@ -26,17 +26,6 @@ public final class BaseExpression implements Expression {
      * Default constructor.
      */
     public BaseExpression() {
-    }
-
-    /**
-     * Constructor requiring 2 elements.
-     *
-     * @param operand1 first element of binomial Base Expression
-     * @param operand2 second element of binomial Base Expression
-     */
-    public BaseExpression(Element operand1, Element operand2) {
-        this.operand1 = operand1;
-        this.operand2 = operand2;
     }
 
     /**
