@@ -37,6 +37,16 @@ public class Equation implements Element {
     private boolean hasOpenEquation;
 
     /**
+     * Current input is to be squared.
+     */
+    private boolean squaredActive;
+
+    /**
+     * Current input is to be cubed.
+     */
+    private boolean cubedActive;
+
+    /**
      * Current memory value.
      */
     private final Memory memory;
@@ -54,6 +64,8 @@ public class Equation implements Element {
     public Equation() {
         this.hasFirstOperand = false;
         this.hasOpenEquation = false;
+        this.squaredActive = false;
+        this.cubedActive = false;
         this.opCount = 0;
         this.eleCount = 0;
         this.memory = Memory.getInstance();
@@ -88,6 +100,80 @@ public class Equation implements Element {
 
         } else if (lastIsEquation()) {
             getLastEquationItem().addItem(scalar);
+        } else {
+            // Fail at this point is a mystery. lol
+            JOptionPane.showMessageDialog(null,
+                    "There is a missing operator.",
+                    "Missig Operator", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Add a Squared element.
+     *
+     * @param squared element to add to list
+     */
+    public final void addItem(Squared squared) {
+        if (itemListIsEmpty()) {
+            EQUATIONITEMS.add(squared);
+            this.eleCount++;
+            this.hasFirstOperand = true;
+            this.squaredActive = false;
+            return;
+        }
+
+        if (!this.hasOpenEquation) {
+            if (isSolvable()) {
+                EQUATIONITEMS.add(new Multiply());
+                this.opCount++;
+                EQUATIONITEMS.add(squared);
+                this.eleCount++;
+            } else {
+                EQUATIONITEMS.add(squared);
+                this.eleCount++;
+            }
+            this.hasFirstOperand = true;
+            this.squaredActive = false;
+
+        } else if (lastIsEquation()) {
+            getLastEquationItem().addItem(squared);
+        } else {
+            // Fail at this point is a mystery. lol
+            JOptionPane.showMessageDialog(null,
+                    "There is a missing operator.",
+                    "Missig Operator", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Add a Cubed element.
+     *
+     * @param cubed element to add to list
+     */
+    public final void addItem(Cubed cubed) {
+        if (itemListIsEmpty()) {
+            EQUATIONITEMS.add(cubed);
+            this.eleCount++;
+            this.hasFirstOperand = true;
+            this.cubedActive = false;
+            return;
+        }
+
+        if (!this.hasOpenEquation) {
+            if (isSolvable()) {
+                EQUATIONITEMS.add(new Multiply());
+                this.opCount++;
+                EQUATIONITEMS.add(cubed);
+                this.eleCount++;
+            } else {
+                EQUATIONITEMS.add(cubed);
+                this.eleCount++;
+            }
+            this.hasFirstOperand = true;
+            this.cubedActive = false;
+
+        } else if (lastIsEquation()) {
+            getLastEquationItem().addItem(cubed);
         } else {
             // Fail at this point is a mystery. lol
             JOptionPane.showMessageDialog(null,
@@ -150,15 +236,26 @@ public class Equation implements Element {
      */
     public boolean addInput() {
 
-        if (!getInput().isEmpty()) {
-            addItem(new Scalar(Double
-                    .parseDouble(getInput().replaceAll(",", ""))));
+        if (getInput().isEmpty()) {
+            setInput("");
+            return false;
+        }
+
+        if (squaredActive) {
+            addItem(new Squared(parseInput()));
             setInput("");
             return true;
         }
 
+        if (cubedActive) {
+            addItem(new Cubed(parseInput()));
+            setInput("");
+            return true;
+        }
+
+        addItem(new Scalar(parseInput()));
         setInput("");
-        return false;
+        return true;
     }
 
     /**
@@ -266,6 +363,20 @@ public class Equation implements Element {
     }
 
     /**
+     * Set boolean for input will be Squared element.
+     */
+    public void activateSquare() {
+        this.squaredActive = true;
+    }
+
+    /**
+     * Set boolean for input will be Cubed element.
+     */
+    public void activateCube() {
+        this.cubedActive = true;
+    }
+
+    /**
      * Check all Equations whether the active Equation is unsolvable.
      *
      * @return boolean
@@ -333,6 +444,36 @@ public class Equation implements Element {
     public boolean nestedLastItemIsScalar() {
         return (lastIsScalar() || (isThereAnOpenEquation()
                 && getLastEquationItem().nestedLastItemIsScalar()));
+    }
+
+    /**
+     * Check whether last item of the active Equation is a Square.
+     *
+     * @return boolean
+     */
+    public boolean nestedLastItemIsSquare() {
+        return (lastIsSquare() || (isThereAnOpenEquation()
+                && getLastEquationItem().nestedLastItemIsSquare()));
+    }
+
+    /**
+     * Check whether last item of the active Equation is a Cube.
+     *
+     * @return boolean
+     */
+    public boolean nestedLastItemIsCube() {
+        return (lastIsCube() || (isThereAnOpenEquation()
+                && getLastEquationItem().nestedLastItemIsCube()));
+    }
+
+    /**
+     * Check whether last item of the active Equation is an Exponent.
+     *
+     * @return boolean
+     */
+    public boolean nestedLastItemIsExponent() {
+        return (lastIsExponent() || (isThereAnOpenEquation()
+                && getLastEquationItem().nestedLastItemIsExponent()));
     }
 
     /**
@@ -435,6 +576,42 @@ public class Equation implements Element {
     }
 
     /**
+     * Check if last item is a Square.
+     *
+     * @return boolean
+     */
+    private boolean lastIsSquare() {
+        if (itemListIsEmpty()) {
+            return false;
+        }
+        return (getLastItem().getClass().equals(Squared.class));
+    }
+
+    /**
+     * Check if last item is a Cube.
+     *
+     * @return boolean
+     */
+    private boolean lastIsCube() {
+        if (itemListIsEmpty()) {
+            return false;
+        }
+        return (getLastItem().getClass().equals(Cubed.class));
+    }
+
+    /**
+     * Check if last item is an Exponent.
+     *
+     * @return boolean
+     */
+    private boolean lastIsExponent() {
+        if (itemListIsEmpty()) {
+            return false;
+        }
+        return (lastIsSquare() || lastIsCube());
+    }
+
+    /**
      * Return last object in an Equation's list.
      *
      * @return an Equation's last list item
@@ -447,6 +624,15 @@ public class Equation implements Element {
     }
 
     /**
+     * Parse the current input after removing commas.
+     *
+     * @return double
+     */
+    private double parseInput() {
+        return Double.parseDouble(getInput().replaceAll(",", ""));
+    }
+
+    /**
      * Find multiply/divide operators to calculate.
      *
      * @param itemList list of elements and operators to simplify
@@ -456,6 +642,7 @@ public class Equation implements Element {
         for (Object obj : itemList) {
             if (obj.getClass().equals(Multiply.class)
                     || obj.getClass().equals(Divide.class)) {
+
                 int index = itemList.indexOf(obj);
 
                 calculate(index, itemList);
@@ -476,6 +663,7 @@ public class Equation implements Element {
         for (Object obj : itemList) {
             if (obj.getClass().equals(Add.class)
                     || obj.getClass().equals(Subtract.class)) {
+
                 int index = itemList.indexOf(obj);
 
                 calculate(index, itemList);

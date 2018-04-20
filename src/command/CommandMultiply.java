@@ -12,7 +12,7 @@ public class CommandMultiply implements Command {
 
     @Override
     public void execute() {
-        if (Facade.multiply()) {
+        if (Facade.operator(3)) {
             Facade.pushComand(this);
         }
     }

@@ -7,12 +7,12 @@ import org.springframework.stereotype.Component;
  *
  * @author Muhammad Diallo Thomas - muhammaddiallo.thomas@gmail.com
  */
-@Component("cmdDivide")
-public class CommandDivide implements Command {
+@Component("cmdMultiply")
+public class CommandCubed implements Command {
 
     @Override
     public void execute() {
-        if (Facade.operator(4)) {
+        if (Facade.exponent(false)) {
             Facade.pushComand(this);
         }
     }

@@ -12,7 +12,7 @@ public class CommandAdd implements Command {
 
     @Override
     public void execute() {
-        if (Facade.add()) {
+        if (Facade.operator(1)) {
             Facade.pushComand(this);
         }
     }

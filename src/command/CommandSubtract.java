@@ -12,7 +12,7 @@ public class CommandSubtract implements Command {
 
     @Override
     public void execute() {
-        if (Facade.subtract()) {
+        if (Facade.operator(2)) {
             Facade.pushComand(this);
         }
     }

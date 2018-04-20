@@ -204,11 +204,12 @@ public class Facade {
     }
 
     /**
-     * Check for valid value then add operator to primary equation.
+     * Check for valid value then addItem operator to ArrayList.
      *
-     * @return
+     * @param op 1 = add, 2 = subtract, 3 = multiply, 4 = operator
+     * @return boolean
      */
-    public static boolean add() {
+    public static boolean operator(int op) {
         if (operatorNotAllowed()) {
             return false;
         }
@@ -221,7 +222,7 @@ public class Facade {
             PRIMARY.setInput(removeCommas(answer));
         }
 
-        if (verifyNewValueOrClosedEquationOrScalar()) {
+        if (verifyNewValueOrElement()) {
             if (newInputAfterClosedEquation()) {
                 addMultiplySignAfterLastEquation();
             }
@@ -235,20 +236,34 @@ public class Facade {
             }
         }
 
-        PRIMARY.addItem(new Add());
-        updateUserDisplay(" + ");
+        switch (op) {
+            case 1:
+                PRIMARY.addItem(new Add());
+                updateUserDisplay(" + ");
+                break;
+            case 2:
+                PRIMARY.addItem(new Subtract());
+                updateUserDisplay(" - ");
+                break;
+            case 3:
+                PRIMARY.addItem(new Multiply());
+                updateUserDisplay(" ˣ ");
+                break;
+            default:
+                PRIMARY.addItem(new Divide());
+                updateUserDisplay(" ÷ ");
+                break;
+        }
         return true;
     }
 
     /**
-     * Check for valid value then addItem operator to ArrayList.
+     * Check for valid value then addItem square or cube to ArrayList.
      *
-     * @return
+     * @param isSquare true for Squared element and false for Cubed element
+     * @return boolean
      */
-    public static boolean subtract() {
-        if (operatorNotAllowed()) {
-            return false;
-        }
+    public static boolean exponent(boolean isSquare) {
         // Save state for undo
         UNDOCOMANDS.push(PRIMARY);
 
@@ -258,96 +273,34 @@ public class Facade {
             PRIMARY.setInput(removeCommas(answer));
         }
 
-        if (verifyNewValueOrClosedEquationOrScalar()) {
+        if (verifyNewValueOrElement()) {
             if (newInputAfterClosedEquation()) {
                 addMultiplySignAfterLastEquation();
             }
 
+            String superscript;
+
+            if (isSquare) {
+                PRIMARY.activateSquare();
+                superscript = "²";
+            } else {
+                PRIMARY.activateCube();
+                superscript = "³";
+            }
+
+            output = PRIMARY.getInput().isEmpty() ? ""
+                    : PRIMARY.getInput() + superscript;
+
             if (!PRIMARY.addInput() && !PRIMARY.nestedLastItemIsClosedEquation()) {
                 JOptionPane.showMessageDialog(null,
                         "You must enter a valid operand "
-                        + "before choosing an operator.",
+                        + "before choosing an exponent.",
                         "Missing operand", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
         }
 
-        PRIMARY.addItem(new Subtract());
-        updateUserDisplay(" - ");
-        return true;
-    }
-
-    /**
-     * Check for valid value then addItem operator to ArrayList.
-     *
-     * @return
-     */
-    public static boolean multiply() {
-        if (operatorNotAllowed()) {
-            return false;
-        }
-        // Save state for undo
-        UNDOCOMANDS.push(PRIMARY);
-
-        synchMachineDisplay();
-
-        if (answerNotEmpty()) {
-            PRIMARY.setInput(removeCommas(answer));
-        }
-
-        if (verifyNewValueOrClosedEquationOrScalar()) {
-            if (newInputAfterClosedEquation()) {
-                addMultiplySignAfterLastEquation();
-            }
-
-            if (!PRIMARY.addInput() && !PRIMARY.nestedLastItemIsClosedEquation()) {
-                JOptionPane.showMessageDialog(null,
-                        "You must enter a valid operand "
-                        + "before choosing an operator.",
-                        "Missing operand", JOptionPane.ERROR_MESSAGE);
-                return false;
-            }
-        }
-
-        PRIMARY.addItem(new Multiply());
-        updateUserDisplay(" ˣ ");
-        return true;
-    }
-
-    /**
-     * Check for valid value then addItem operator to ArrayList.
-     *
-     * @return
-     */
-    public static boolean divide() {
-        if (operatorNotAllowed()) {
-            return false;
-        }
-        // Save state for undo
-        UNDOCOMANDS.push(PRIMARY);
-
-        synchMachineDisplay();
-
-        if (answerNotEmpty()) {
-            PRIMARY.setInput(removeCommas(answer));
-        }
-
-        if (verifyNewValueOrClosedEquationOrScalar()) {
-            if (newInputAfterClosedEquation()) {
-                addMultiplySignAfterLastEquation();
-            }
-
-            if (!PRIMARY.addInput() && !PRIMARY.nestedLastItemIsClosedEquation()) {
-                JOptionPane.showMessageDialog(null,
-                        "You must enter a valid operand "
-                        + "before choosing an operator.",
-                        "Missing operand", JOptionPane.ERROR_MESSAGE);
-                return false;
-            }
-        }
-
-        PRIMARY.addItem(new Divide());
-        updateUserDisplay(" ÷ ");
+        updateUserDisplay(" " + output + " ");
         return true;
     }
 
@@ -599,9 +552,10 @@ public class Facade {
      *
      * @return boolean
      */
-    private static boolean verifyNewValueOrClosedEquationOrScalar() {
+    private static boolean verifyNewValueOrElement() {
         return (validateNewVal() || PRIMARY.nestedLastItemIsClosedEquation()
-                || PRIMARY.nestedLastItemIsScalar());
+                || PRIMARY.nestedLastItemIsScalar()
+                || PRIMARY.nestedLastItemIsExponent());
     }
 
     /**
