@@ -3,6 +3,9 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
+import model.exponent.Cubed;
+import model.exponent.Exponent;
+import model.exponent.Squared;
 import model.operator.*;
 
 /**
@@ -616,7 +619,8 @@ public class Equation implements Element {
         if (itemListIsEmpty()) {
             return false;
         }
-        return (lastIsSquare() || lastIsCube());
+        return (getLastItem().getClass().getInterfaces()[0].equals(
+                Exponent.class));
     }
 
     /**

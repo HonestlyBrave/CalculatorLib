@@ -1,5 +1,7 @@
 package model;
 
+import model.exponent.Cubed;
+import model.exponent.Squared;
 import command.Command;
 import java.text.DecimalFormat;
 import java.util.ArrayDeque;
@@ -316,14 +318,12 @@ public class Facade {
 
         if (isSquared) {
             Squared tmp = (Squared) PRIMARY.getLastElementItem();
-            if (!(tmp.getElement() instanceof Squared
-                    || tmp.getElement() instanceof Cubed)) {
+            if (tmp.isNotExponent()) {
                 updateUserDisplay(output);
             }
         } else {
             Cubed tmp = (Cubed) PRIMARY.getLastElementItem();
-            if (!(tmp.getElement() instanceof Squared
-                    || tmp.getElement() instanceof Cubed)) {
+            if (tmp.isNotExponent()) {
                 updateUserDisplay(output);
             }
         }

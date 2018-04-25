@@ -1,13 +1,15 @@
-package model;
+package model.exponent;
 
-import java.text.DecimalFormat;
+import model.Element;
+import model.Equation;
+import model.Scalar;
 
 /**
  * Leaf class of the math composite.
  *
  * @author Muhammad Diallo Thomas - muhammaddiallo.thomas@gmail.com
  */
-public class Squared implements Element {
+public class Squared implements Exponent {
 
     // <editor-fold defaultstate="collapsed" desc="Private attributes. Click on + sign to show.">
     /**
@@ -16,9 +18,9 @@ public class Squared implements Element {
     private final Element element;
 
     /**
-     * Use commas as separator and eliminate extra zeros after decimal.
+     * False if this element is an exponent.
      */
-    private final DecimalFormat FINE = new DecimalFormat("");
+    private final boolean notExponent;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructor. Click on + sign to show.">
@@ -29,16 +31,20 @@ public class Squared implements Element {
      */
     public Squared(Element element) {
         this.element = element;
+        notExponent = !(element.getClass().getInterfaces()[0]
+                .equals(Exponent.class));
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Public methods. Click on + sign to show.">
-    /**
-     *
-     * @return current Element
-     */
+    @Override
     public Element getElement() {
         return element;
+    }
+
+    @Override
+    public boolean isNotExponent() {
+        return notExponent;
     }
 
     @Override
