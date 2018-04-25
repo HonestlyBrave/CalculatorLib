@@ -275,10 +275,10 @@ public class Facade {
     /**
      * Check for valid value then addItem square or cube to ArrayList.
      *
-     * @param isSquare true for Squared element and false for Cubed element
+     * @param isSquared true for Squared element and false for Cubed element
      * @return boolean
      */
-    public static boolean exponent(boolean isSquare) {
+    public static boolean exponent(boolean isSquared) {
         // Save state for undo
         UNDOCOMANDS.push(PRIMARY);
 
@@ -288,32 +288,45 @@ public class Facade {
             PRIMARY.setInput(removeCommas(answer));
         }
 
-        if (verifyNewValueOrSpecificElement()) {
-            if (newInputAfterClosedEquation()) {
+        if (validateNewVal()) {
+
+            if (PRIMARY.nestedLastItemIsClosedEquation()) {
                 addMultiplySignAfterLastEquation();
             }
-            if (newInputAfterExponent()) {
+            if (PRIMARY.nestedLastItemIsExponent()) {
                 addMultiplySignAfterLastExponent();
             }
 
-            if (isSquare) {
-                PRIMARY.activateSquare();
-                output = "²";
-            } else {
-                PRIMARY.activateCube();
-                output = "³";
-            }
+            isCubedOrSquared(isSquared);
+            PRIMARY.addInput();
 
-            if (!PRIMARY.addInput() && !PRIMARY.nestedLastItemIsClosedEquation()) {
-                JOptionPane.showMessageDialog(null,
-                        "You must enter a valid operand "
-                        + "before choosing an exponent.",
-                        "Missing operand", JOptionPane.ERROR_MESSAGE);
-                return false;
-            }
+        } else if (PRIMARY.nestedLastItemIsClosedEquation()) {
+
+            isCubedOrSquared(isSquared);
+            addElementExponent(isSquared);
+
+        } else if (PRIMARY.nestedLastItemIsExponent()) {
+
+            isCubedOrSquared(isSquared);
+            addElementExponent(isSquared);
+
+        } else {
+            return false;
         }
 
-        updateUserDisplay(output);
+        if (isSquared) {
+            Squared tmp = (Squared) PRIMARY.getLastElementItem();
+            if (!(tmp.getElement() instanceof Squared
+                    || tmp.getElement() instanceof Cubed)) {
+                updateUserDisplay(output);
+            }
+        } else {
+            Cubed tmp = (Cubed) PRIMARY.getLastElementItem();
+            if (!(tmp.getElement() instanceof Squared
+                    || tmp.getElement() instanceof Cubed)) {
+                updateUserDisplay(output);
+            }
+        }
         return true;
     }
 
@@ -367,6 +380,7 @@ public class Facade {
 
         PRIMARY.closeEquation();
         updateUserDisplay(" )");
+        view.setDisplay(PRIMARY.toString());
         return true;
     }
 
@@ -731,4 +745,47 @@ public class Facade {
         return Double.parseDouble(removeCommas(number));
     }
     // </editor-fold>
+
+    private static void isCubedOrSquared(boolean isSquared) {
+        if (isSquared) {
+            PRIMARY.activateSquare();
+            output = "²";
+        } else {
+            PRIMARY.activateCube();
+            output = "³";
+        }
+    }
+
+    private static void addElementExponent(boolean isSquared) {
+        Element tmpElement = PRIMARY.getLastElementItem();
+
+        PRIMARY.removeLastElement();
+        if (isSquared) {
+            PRIMARY.addItem(new Squared(tmpElement));
+        } else {
+            PRIMARY.addItem(new Cubed(tmpElement));
+        }
+        view.setDisplay(PRIMARY.toString());
+//        nestExponent(tmpElement);
+    }
+
+    private static void nestExponent(Element element) {
+
+        while (element instanceof Squared || element instanceof Cubed) {
+            if (element instanceof Squared) {
+                Squared tmp = (Squared) element;
+                element = tmp.getElement();
+            }
+            if (element instanceof Cubed) {
+                Cubed tmp = (Cubed) element;
+                element = tmp.getElement();
+            }
+        }
+        synchMachineDisplay();
+        int tmp = displayText.indexOf(element.toString());
+        displayText = displayText.substring(0, tmp);
+        displayText = displayText.concat("(" + element.toString() + ")");
+        setUserDisplay(displayText);
+
+    }
 }

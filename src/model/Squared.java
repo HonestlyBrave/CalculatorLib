@@ -11,9 +11,9 @@ public class Squared implements Element {
 
     // <editor-fold defaultstate="collapsed" desc="Private attributes. Click on + sign to show.">
     /**
-     * Number to be evaluated.
+     * Element to be evaluated.
      */
-    private final double number;
+    private final Element element;
 
     /**
      * Use commas as separator and eliminate extra zeros after decimal.
@@ -25,17 +25,25 @@ public class Squared implements Element {
     /**
      * Default constructor.
      *
-     * @param number to be squared
+     * @param element
      */
-    public Squared(double number) {
-        this.number = number;
+    public Squared(Element element) {
+        this.element = element;
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Public methods. Click on + sign to show.">
+    /**
+     *
+     * @return current Element
+     */
+    public Element getElement() {
+        return element;
+    }
+
     @Override
     public double evaluate() {
-        return Math.pow(number, 2);
+        return Math.pow(element.evaluate(), 2);
     }
 
     /**
@@ -44,7 +52,10 @@ public class Squared implements Element {
      */
     @Override
     public String toString() {
-        return FINE.format(number) + "²";
+        if (element instanceof Scalar || element instanceof Equation) {
+            return element.toString() + "²";
+        }
+        return "(" + element.toString() + ")" + "²";
     }
     // </editor-fold>
 

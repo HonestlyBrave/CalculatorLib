@@ -239,20 +239,21 @@ public class Equation implements Element {
             setInput("");
             return false;
         }
+        Scalar tmpScalar = new Scalar(parseInput());
 
         if (squaredActive) {
-            addItem(new Squared(parseInput()));
+            addItem(new Squared(tmpScalar));
             setInput("");
             return true;
         }
 
         if (cubedActive) {
-            addItem(new Cubed(parseInput()));
+            addItem(new Cubed(tmpScalar));
             setInput("");
             return true;
         }
 
-        addItem(new Scalar(parseInput()));
+        addItem(tmpScalar);
         setInput("");
         return true;
     }
@@ -698,4 +699,12 @@ public class Equation implements Element {
         list.remove(index);
     }
     // </editor-fold>
+
+    /**
+     * Remove element to be encapsulated.
+     */
+    public void removeLastElement() {
+        EQUATIONITEMS.remove(getLastElementItem());
+        eleCount -= 1;
+    }
 }
