@@ -2,7 +2,6 @@ package model.exponent;
 
 import model.Element;
 import model.Equation;
-import model.Scalar;
 
 /**
  * Leaf class of the math composite.
@@ -58,10 +57,11 @@ public class Cubed implements Exponent {
      */
     @Override
     public String toString() {
-        if (element instanceof Scalar || element instanceof Equation) {
+        if (!(element.getClass().getInterfaces()[0].equals(Exponent.class))
+                && !(element.getClass().equals(Equation.class))) {
             return element.toString() + "³";
         }
-        return "(" + element.toString() + ")" + "³";
+        return "(" + element.toString().trim() + ")" + "³";
     }
     // </editor-fold>
 

@@ -244,13 +244,13 @@ public class Equation implements Element {
         }
         Scalar tmpScalar = new Scalar(parseInput());
 
-        if (squaredActive) {
+        if (nestedEquationSquaredActive()) {
             addItem(new Squared(tmpScalar));
             setInput("");
             return true;
         }
 
-        if (cubedActive) {
+        if (nestedEquationCubedActive()) {
             addItem(new Cubed(tmpScalar));
             setInput("");
             return true;
@@ -330,7 +330,7 @@ public class Equation implements Element {
             check = calculateAddSubtract(EQUATIONITEMS);
         }
 
-        return getLastElementItem().evaluate();
+        return getLastNestedElementItem().evaluate();
     }
 
     /**
@@ -340,7 +340,15 @@ public class Equation implements Element {
      */
     @Override
     public String toString() {
-        return getLastElementItem().toString();
+        String output = "";
+
+        for (Object obj : EQUATIONITEMS) {
+
+            output += obj.toString();
+
+        }
+
+        return output;
     }
 
     /**
@@ -374,14 +382,22 @@ public class Equation implements Element {
      * Set boolean that input will be a Squared element.
      */
     public void activateSquare() {
-        this.squaredActive = true;
+        if (!hasOpenEquation) {
+            this.squaredActive = true;
+        } else {
+            getLastEquationItem().activateSquare();
+        }
     }
 
     /**
      * Set boolean that input will be a Cubed element.
      */
     public void activateCube() {
-        this.cubedActive = true;
+        if (!hasOpenEquation) {
+            this.cubedActive = true;
+        } else {
+            getLastEquationItem().activateCube();
+        }
     }
 
     /**
@@ -486,12 +502,44 @@ public class Equation implements Element {
     }
 
     /**
+     * Verify whether squared active in nested equation.
+     *
+     * @return boolean
+     */
+    public boolean nestedEquationSquaredActive() {
+        return (squaredActive || (isThereAnOpenEquation()
+                && getLastEquationItem().nestedEquationSquaredActive()));
+    }
+
+    /**
+     * Verify whether cubed active in nested equation.
+     *
+     * @return boolean
+     */
+    public boolean nestedEquationCubedActive() {
+        return (cubedActive || (isThereAnOpenEquation()
+                && getLastEquationItem().nestedEquationCubedActive()));
+    }
+
+    /**
      * True if the Equation's item list is empty.
      *
      * @return boolean
      */
     public boolean itemListIsEmpty() {
         return (EQUATIONITEMS.isEmpty());
+    }
+
+    /**
+     * Remove element to be encapsulated.
+     */
+    public void removeLastElement() {
+        if (this.hasOpenEquation) {
+            getLastEquationItem().removeLastElement();
+        }
+
+        EQUATIONITEMS.remove(getLastNestedElementItem());
+        eleCount -= 1;
     }
 
     /**
@@ -541,11 +589,14 @@ public class Equation implements Element {
     }
 
     /**
-     * Retrieve the last Element.
+     * Retrieve the last nested Element.
      *
      * @return Element
      */
-    public Element getLastElementItem() {
+    public Element getLastNestedElementItem() {
+        if (this.hasOpenEquation) {
+            getLastEquationItem().getLastNestedElementItem();
+        }
         return (Element) getLastItem();
     }
 
@@ -703,12 +754,4 @@ public class Equation implements Element {
         list.remove(index);
     }
     // </editor-fold>
-
-    /**
-     * Remove element to be encapsulated.
-     */
-    public void removeLastElement() {
-        EQUATIONITEMS.remove(getLastElementItem());
-        eleCount -= 1;
-    }
 }

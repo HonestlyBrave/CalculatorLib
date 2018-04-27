@@ -12,7 +12,7 @@ public class Multiply implements Operator {
     /**
      * Multiply.
      */
-    public static final String OPERATOR = "ˣ";
+    public static final String OPERATOR = " ˣ ";
 
     // <editor-fold defaultstate="collapsed" desc="Public methods. Click on + sign to show.">
     @Override

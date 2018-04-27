@@ -12,7 +12,7 @@ public class Subtract implements Operator {
     /**
      * Subtract.
      */
-    public static final String OPERATOR = "-";
+    public static final String OPERATOR = " - ";
 
     // <editor-fold defaultstate="collapsed" desc="Public methods. Click on + sign to show.">
     @Override
@@ -26,7 +26,7 @@ public class Subtract implements Operator {
      */
     @Override
     public String toString() {
-        return "-";
+        return OPERATOR;
     }
     // </editor-fold>
 }

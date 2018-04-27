@@ -72,8 +72,7 @@ public final class BaseExpression implements Expression {
      */
     @Override
     public String toString() {
-        return "(" + this.operand1 + " " + this.operator + " " + this.operand2
-                + ")";
+        return "(" + this.operand1 + this.operator + this.operand2 + ")";
     }
     // </editor-fold>
 }

@@ -1,12 +1,12 @@
 package model;
 
-import model.exponent.Cubed;
-import model.exponent.Squared;
 import command.Command;
 import java.text.DecimalFormat;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import javax.swing.JOptionPane;
+import model.exponent.Cubed;
+import model.exponent.Squared;
 import model.operator.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -118,7 +118,7 @@ public class Facade {
         UNDOCOMANDS.push(PRIMARY);
 
         if (PRIMARY.nestedLastItemIsExponent()) {
-            PRIMARY.addMemory(PRIMARY.getLastElementItem().evaluate());
+            PRIMARY.addMemory(PRIMARY.getLastNestedElementItem().evaluate());
             PRIMARY.setInput("");
             return;
         }
@@ -137,7 +137,7 @@ public class Facade {
         UNDOCOMANDS.push(PRIMARY);
 
         if (PRIMARY.nestedLastItemIsExponent()) {
-            PRIMARY.addMemory(PRIMARY.getLastElementItem().evaluate());
+            PRIMARY.addMemory(PRIMARY.getLastNestedElementItem().evaluate());
             PRIMARY.setInput("");
             return;
         }
@@ -241,6 +241,9 @@ public class Facade {
             if (newInputAfterClosedEquation()) {
                 addMultiplySignAfterLastEquation();
             }
+            if (newInputAfterExponent()) {
+                addMultiplySignAfterLastExponent();
+            }
 
             if (!PRIMARY.addInput()
                     && !PRIMARY.nestedLastItemIsClosedEquation()
@@ -316,14 +319,14 @@ public class Facade {
             return false;
         }
 
+        synchMachineDisplay();
+
         if (isSquared) {
-            Squared tmp = (Squared) PRIMARY.getLastElementItem();
-            if (tmp.isNotExponent()) {
+            if (!displayText.trim().endsWith("²")) {
                 updateUserDisplay(output);
             }
         } else {
-            Cubed tmp = (Cubed) PRIMARY.getLastElementItem();
-            if (tmp.isNotExponent()) {
+            if (!displayText.trim().endsWith("³")) {
                 updateUserDisplay(output);
             }
         }
@@ -334,7 +337,7 @@ public class Facade {
      * Check for valid Scalar then add new Equation to primary Equation.
      */
     public static void openParentheses() {
-        updateUserDisplay("( ");
+        updateUserDisplay("(");
         // Save state for undo
         UNDOCOMANDS.push(PRIMARY);
 
@@ -347,6 +350,9 @@ public class Facade {
         if (verifyNewValueOrSpecificElement()) {
             if (newInputAfterClosedEquation()) {
                 addMultiplySignAfterLastEquation();
+            }
+            if (newInputAfterExponent()) {
+                addMultiplySignAfterLastExponent();
             }
 
             PRIMARY.addInput();
@@ -379,8 +385,7 @@ public class Facade {
         }
 
         PRIMARY.closeEquation();
-        updateUserDisplay(" )");
-        view.setDisplay(PRIMARY.toString());
+        updateUserDisplay(")");
         return true;
     }
 
@@ -697,7 +702,7 @@ public class Facade {
         synchMachineDisplay();
         int tmp = displayText.lastIndexOf("(");
         displayText = displayText.substring(0, tmp);
-        displayText = displayText.concat(" ˣ ( ");
+        displayText = displayText.concat(" ˣ (");
         setUserDisplay(displayText);
     }
 
@@ -718,12 +723,20 @@ public class Facade {
      */
     private static void addMultiplySignAfterLastExponent() {
         synchMachineDisplay();
-        int tmp = displayText.lastIndexOf("²") != -1
-                ? displayText.lastIndexOf("²") : displayText.lastIndexOf("³");
-        String newinput = displayText.substring(tmp + 1);
-        displayText = displayText.substring(0, tmp + 1);
-        displayText = displayText.concat(" ˣ " + newinput);
-        setUserDisplay(displayText);
+
+        // Select last existing superscript.
+        int tmp2 = displayText.lastIndexOf("²");
+        int tmp3 = displayText.lastIndexOf("³");
+        int tmp = tmp2 > tmp3 ? tmp2 : tmp3;
+
+        // If superscript exist,
+        if (tmp != -1) {
+            // separate newest input from display text.
+            String newinput = displayText.substring(tmp + 1);
+            displayText = displayText.substring(0, tmp + 1);
+            // Concatenate with multiply sign in between input and display text.
+            setUserDisplay(displayText.concat(" ˣ " + newinput));
+        }
     }
 
     /**
@@ -744,8 +757,12 @@ public class Facade {
     private static double parseCommas(String number) {
         return Double.parseDouble(removeCommas(number));
     }
-    // </editor-fold>
 
+    /**
+     * Activate correct flag and set the output accordingly.
+     *
+     * @param isSquared
+     */
     private static void isCubedOrSquared(boolean isSquared) {
         if (isSquared) {
             PRIMARY.activateSquare();
@@ -756,8 +773,13 @@ public class Facade {
         }
     }
 
+    /**
+     * Add correct element to Primary equation.
+     *
+     * @param isSquared
+     */
     private static void addElementExponent(boolean isSquared) {
-        Element tmpElement = PRIMARY.getLastElementItem();
+        Element tmpElement = PRIMARY.getLastNestedElementItem();
 
         PRIMARY.removeLastElement();
         if (isSquared) {
@@ -765,27 +787,9 @@ public class Facade {
         } else {
             PRIMARY.addItem(new Cubed(tmpElement));
         }
-        view.setDisplay(PRIMARY.toString());
-//        nestExponent(tmpElement);
-    }
-
-    private static void nestExponent(Element element) {
-
-        while (element instanceof Squared || element instanceof Cubed) {
-            if (element instanceof Squared) {
-                Squared tmp = (Squared) element;
-                element = tmp.getElement();
-            }
-            if (element instanceof Cubed) {
-                Cubed tmp = (Cubed) element;
-                element = tmp.getElement();
-            }
-        }
         synchMachineDisplay();
-        int tmp = displayText.indexOf(element.toString());
-        displayText = displayText.substring(0, tmp);
-        displayText = displayText.concat("(" + element.toString() + ")");
-        setUserDisplay(displayText);
-
+        view.setDisplay(PRIMARY.toString());
     }
+    // </editor-fold>
+
 }
