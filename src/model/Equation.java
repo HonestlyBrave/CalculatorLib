@@ -29,6 +29,12 @@ public class Equation implements Element {
     private int opCount, eleCount;
 
     /**
+     * Signify whether this is a nested calculation i.e. brackets. Only the
+     * initial Equation will be set to false.
+     */
+    private boolean isNested = true;
+
+    /**
      * Status of the first operand.
      */
     private boolean hasFirstOperand;
@@ -56,12 +62,13 @@ public class Equation implements Element {
     /**
      * Current input.
      */
-    private String input = "";
+    private final Input input;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructor. Click on + sign to show.">
     /**
-     * Default constructor which sets the various initial states of an Equation.
+     * Default constructor which sets the various initial states of a nested
+     * Equation.
      */
     public Equation() {
         this.hasFirstOperand = false;
@@ -71,6 +78,24 @@ public class Equation implements Element {
         this.opCount = 0;
         this.eleCount = 0;
         this.memory = Memory.getInstance();
+        this.input = Input.getInstance();
+    }
+
+    /**
+     * Constructor for the initial Equation only.
+     *
+     * @param primary
+     */
+    public Equation(boolean primary) {
+        this.isNested = primary;
+        this.hasFirstOperand = false;
+        this.hasOpenEquation = false;
+        this.squaredActive = false;
+        this.cubedActive = false;
+        this.opCount = 0;
+        this.eleCount = 0;
+        this.memory = Memory.getInstance();
+        this.input = Input.getInstance();
     }
     // </editor-fold>
 
@@ -238,26 +263,26 @@ public class Equation implements Element {
      */
     public boolean addInput() {
 
-        if (getInput().isEmpty()) {
-            setInput("");
+        if (input.isEmpty()) {
+            input.setInput("");
             return false;
         }
         Scalar tmpScalar = new Scalar(parseInput());
 
         if (nestedEquationSquaredActive()) {
             addItem(new Squared(tmpScalar));
-            setInput("");
+            input.setInput("");
             return true;
         }
 
         if (nestedEquationCubedActive()) {
             addItem(new Cubed(tmpScalar));
-            setInput("");
+            input.setInput("");
             return true;
         }
 
         addItem(tmpScalar);
-        setInput("");
+        input.setInput("");
         return true;
     }
 
@@ -342,40 +367,21 @@ public class Equation implements Element {
     public String toString() {
         String output = "";
 
+        if (isNested) {
+            output += "(";
+        }
+
         for (Object obj : EQUATIONITEMS) {
 
             output += obj.toString();
 
         }
 
+        if (isNested) {
+            output += ")";
+        }
+
         return output;
-    }
-
-    /**
-     * Manage current user input.
-     *
-     * @return current input
-     */
-    public String getInput() {
-        return input;
-    }
-
-    /**
-     * Manage current user input.
-     *
-     * @param newInput
-     */
-    public void setInput(String newInput) {
-        input = newInput;
-    }
-
-    /**
-     * Manage current user input.
-     *
-     * @param newInput
-     */
-    public void updateInput(String newInput) {
-        input += newInput;
     }
 
     /**
@@ -536,6 +542,7 @@ public class Equation implements Element {
     public void removeLastElement() {
         if (this.hasOpenEquation) {
             getLastEquationItem().removeLastElement();
+            return;
         }
 
         EQUATIONITEMS.remove(getLastNestedElementItem());
@@ -595,7 +602,7 @@ public class Equation implements Element {
      */
     public Element getLastNestedElementItem() {
         if (this.hasOpenEquation) {
-            getLastEquationItem().getLastNestedElementItem();
+            return getLastEquationItem().getLastNestedElementItem();
         }
         return (Element) getLastItem();
     }
@@ -692,7 +699,7 @@ public class Equation implements Element {
      * @return double
      */
     private double parseInput() {
-        return Double.parseDouble(getInput().replaceAll(",", ""));
+        return Double.parseDouble(input.getInput().replaceAll(",", ""));
     }
 
     /**

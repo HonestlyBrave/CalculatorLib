@@ -75,7 +75,7 @@ public class Facade {
      * Main Equation for calculation using elements and operators. Elements are
      * base expressions, equations(parentheses), scalars and a singleton memory.
      */
-    private static Equation PRIMARY = new Equation();
+    private static Equation PRIMARY = new Equation(false);
 
     /**
      * Machine equivalent of actual display.
@@ -91,6 +91,11 @@ public class Facade {
      * Machine reference of last answer.
      */
     private static String answer = "";
+
+    /**
+     * Current input.
+     */
+    private static final Input INPUT = Input.getInstance();
 
     /**
      * Stack(LIFO) of executed commands.
@@ -119,13 +124,13 @@ public class Facade {
 
         if (PRIMARY.nestedLastItemIsExponent()) {
             PRIMARY.addMemory(PRIMARY.getLastNestedElementItem().evaluate());
-            PRIMARY.setInput("");
+            INPUT.setInput("");
             return;
         }
 
         if (validateNewMemVal()) {
             PRIMARY.addMemory(parseCommas(getCleanString()));
-            PRIMARY.setInput("");
+            INPUT.setInput("");
         }
     }
 
@@ -138,13 +143,13 @@ public class Facade {
 
         if (PRIMARY.nestedLastItemIsExponent()) {
             PRIMARY.addMemory(PRIMARY.getLastNestedElementItem().evaluate());
-            PRIMARY.setInput("");
+            INPUT.setInput("");
             return;
         }
 
         if (validateNewMemVal()) {
             PRIMARY.subtractMemory(parseCommas(getCleanString()));
-            PRIMARY.setInput("");
+            INPUT.setInput("");
         }
     }
 
@@ -163,7 +168,7 @@ public class Facade {
         }
 
         // If there is new input.
-        if (!PRIMARY.getInput().isEmpty()) {
+        if (!INPUT.isEmpty()) {
             if (newInputAfterClosedEquation()) {
                 addMultiplySignAfterLastEquation();
             }
@@ -209,12 +214,12 @@ public class Facade {
 
         // Clear display and input.
         displayText = "";
-        PRIMARY.setInput("");
+        INPUT.setInput("");
         output = "";
         answer = "";
 
         // New primary calculation.
-        PRIMARY = new Equation();
+        PRIMARY = new Equation(false);
         setUserDisplay("");
     }
 
@@ -234,7 +239,7 @@ public class Facade {
         synchMachineDisplay();
 
         if (answerNotEmpty()) {
-            PRIMARY.setInput(removeCommas(answer));
+            INPUT.setInput(removeCommas(answer));
         }
 
         if (verifyNewValueOrSpecificElement()) {
@@ -290,7 +295,7 @@ public class Facade {
         synchMachineDisplay();
 
         if (answerNotEmpty()) {
-            PRIMARY.setInput(removeCommas(answer));
+            INPUT.setInput(removeCommas(answer));
         }
 
         if (validateNewVal()) {
@@ -344,7 +349,7 @@ public class Facade {
         synchMachineDisplay();
 
         if (answerNotEmpty()) {
-            PRIMARY.setInput(removeCommas(answer));
+            INPUT.setInput(removeCommas(answer));
         }
 
         if (verifyNewValueOrSpecificElement()) {
@@ -399,8 +404,8 @@ public class Facade {
         synchMachineDisplay();
 
         if (!answer.isEmpty() && PRIMARY.itemListIsEmpty()
-                && PRIMARY.getInput().isEmpty()) {
-            PRIMARY.setInput(removeCommas(answer));
+                && INPUT.isEmpty()) {
+            INPUT.setInput(removeCommas(answer));
         }
 
         // Verify input exist.
@@ -425,8 +430,8 @@ public class Facade {
         setUserDisplay(PRIMARY.toString() + " = " + answer);
 
         // Clear main equation.
-        PRIMARY = new Equation();
-        PRIMARY.setInput("");
+        PRIMARY = new Equation(false);
+        INPUT.setInput("");
     }
 
     /**
@@ -435,7 +440,7 @@ public class Facade {
      * @param latestInput literal user input
      */
     public static void updateInput(String latestInput) {
-        PRIMARY.updateInput(latestInput);
+        INPUT.updateInput(latestInput);
         if (RemoveAnswerFromDisplay()) {
             setUserDisplay("");
         }
@@ -467,13 +472,13 @@ public class Facade {
      * Remove the last character from input and display.
      */
     public static void undoDisplay() {
-        String current = PRIMARY.getInput();
+        String current = INPUT.getInput();
         int currentLen = current.length();
 
         String undone = current.isEmpty() ? ""
                 : current.substring(0, currentLen - 1);
 
-        PRIMARY.setInput(undone);
+        INPUT.setInput(undone);
         undoUserDisplay();
     }
 
@@ -558,8 +563,7 @@ public class Facade {
      * @return boolean
      */
     private static boolean validateNewVal() {
-        return (!PRIMARY.getInput().isEmpty()
-                && !PRIMARY.getInput().equalsIgnoreCase("."));
+        return (!INPUT.isEmpty());
     }
 
     /**
@@ -615,7 +619,7 @@ public class Facade {
      */
     private static boolean answerNotEmpty() {
         return (!answer.isEmpty() && PRIMARY.itemListIsEmpty()
-                && PRIMARY.getInput().isEmpty());
+                && INPUT.isEmpty());
     }
 
     /**
@@ -624,7 +628,7 @@ public class Facade {
      * @return boolean
      */
     private static boolean bothInputAnswerEmpty() {
-        return (PRIMARY.getInput().isEmpty() && answer.isEmpty());
+        return (INPUT.isEmpty() && answer.isEmpty());
     }
 
     /**
@@ -635,7 +639,7 @@ public class Facade {
      */
     private static boolean RemoveAnswerFromDisplay() {
         return (!answer.isEmpty() && PRIMARY.itemListIsEmpty()
-                && PRIMARY.getInput().length() == 1);
+                && INPUT.getInput().length() == 1);
     }
 
     /**
@@ -646,9 +650,9 @@ public class Facade {
     private static boolean operatorNotAllowed() {
         return ((PRIMARY.itemListIsEmpty() && bothInputAnswerEmpty())
                 || (PRIMARY.nestedEquationEmpty()
-                && PRIMARY.getInput().isEmpty())
+                && INPUT.isEmpty())
                 || (PRIMARY.nestedLastItemIsOperator()
-                && PRIMARY.getInput().isEmpty()));
+                && INPUT.isEmpty()));
     }
 
     /**
@@ -659,9 +663,8 @@ public class Facade {
     private static boolean cannotCloseParaNow() {
         return (PRIMARY.itemListIsEmpty()
                 || !PRIMARY.isThereAnOpenEquation()
-                || (PRIMARY.nestedLastItemIsOperator() && PRIMARY.getInput()
-                .isEmpty())
-                || (PRIMARY.getInput().isEmpty()
+                || (PRIMARY.nestedLastItemIsOperator() && INPUT.isEmpty())
+                || (INPUT.isEmpty()
                 && PRIMARY.nestedEquationEmpty()));
     }
     // </editor-fold>
@@ -674,7 +677,7 @@ public class Facade {
      */
     private static void setMachineInputOutput(String text) {
         output = text;
-        PRIMARY.setInput(removeCommas(text));
+        INPUT.setInput(removeCommas(text));
     }
 
     /**
