@@ -1,7 +1,6 @@
 package model.exponent;
 
 import model.Element;
-import model.Equation;
 
 /**
  * Leaf class of the math composite.
@@ -57,8 +56,7 @@ public class Squared implements Exponent {
      */
     @Override
     public String toString() {
-        if (!(element.getClass().getInterfaces()[0].equals(Exponent.class))
-                && !(element.getClass().equals(Equation.class))) {
+        if (!(element.getClass().getInterfaces()[0].equals(Exponent.class))) {
             return element.toString() + "²";
         }
         return "(" + element.toString().trim() + ")" + "²";
