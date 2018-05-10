@@ -122,15 +122,17 @@ public class Facade {
         // Save state for undo
         UNDOCOMANDS.push(PRIMARY);
 
+        if (answerNotEmpty()) {
+            INPUT.setInput(removeCommas(answer));
+        }
+
         if (PRIMARY.nestedLastItemIsExponent()) {
             PRIMARY.addMemory(PRIMARY.getLastNestedElementItem().evaluate());
-            INPUT.setInput("");
             return;
         }
 
         if (validateNewMemVal()) {
-            PRIMARY.addMemory(parseCommas(getCleanString()));
-            INPUT.setInput("");
+            PRIMARY.addMemory(parseCommas(INPUT.getInput()));
         }
     }
 
@@ -141,15 +143,17 @@ public class Facade {
         // Save state for undo
         UNDOCOMANDS.push(PRIMARY);
 
+        if (answerNotEmpty()) {
+            INPUT.setInput(removeCommas(answer));
+        }
+
         if (PRIMARY.nestedLastItemIsExponent()) {
             PRIMARY.addMemory(PRIMARY.getLastNestedElementItem().evaluate());
-            INPUT.setInput("");
             return;
         }
 
         if (validateNewMemVal()) {
-            PRIMARY.subtractMemory(parseCommas(getCleanString()));
-            INPUT.setInput("");
+            PRIMARY.subtractMemory(parseCommas(INPUT.getInput()));
         }
     }
 
@@ -553,8 +557,8 @@ public class Facade {
         int index = displayText.lastIndexOf(" ");
         // Take everything after index.
         cleanString = displayText.substring(index + 1);
-
-        return cleanString;
+        // Remove open bracket if exists then return.
+        return cleanString.replace("(", "");
     }
 
     /**
@@ -572,8 +576,7 @@ public class Facade {
      * @return boolean
      */
     private static boolean validateNewMemVal() {
-        if (!getCleanString().isEmpty()
-                && !getCleanString().equalsIgnoreCase(".")) {
+        if (!INPUT.isEmpty()) {
             return true;
         } else {
             JOptionPane.showMessageDialog(null, "There is no value to use.",
