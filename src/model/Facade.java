@@ -1,9 +1,13 @@
 package model;
 
 import command.Command;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import model.exponent.Cubed;
 import model.exponent.Squared;
@@ -21,6 +25,61 @@ import view.View;
 @Component("facade")
 public class Facade {
 
+    // <editor-fold defaultstate="collapsed" desc="Logger and related methods. Click on + sign to show.">
+    /**
+     * Logging tool.
+     */
+    private static final Logger LOGG = Logger.getLogger(Facade.class.getName());
+
+    /**
+     * Configure the logger.
+     */
+    private static void startLogger() {
+        LOGG.setLevel(Level.ALL);
+        try {
+            LOGG.addHandler(new FileHandler());
+        } catch (IOException | SecurityException ex) {
+            LOGG.log(Level.SEVERE, null, ex);
+        }
+    }
+
+    /**
+     * Logging routine.
+     */
+    private static void logAnswerSelected() {
+        LOGG.info("Input has been set to the previous answer.");
+    }
+
+    /**
+     * Logging routine.
+     */
+    private static void logNewInputIsValid() {
+        LOGG.info("New value for Input is valid.");
+    }
+
+    /**
+     * Logging routine.
+     */
+    private static void logPreviousElementIsClosedEquation() {
+        LOGG.info(
+                "The last element in the active Equation is a closed Equation.");
+    }
+
+    /**
+     * Logging routine.
+     */
+    private static void logPreviousElementIsExponent() {
+        LOGG.info("The last element in the active Equation is an Exponent.");
+    }
+
+    /**
+     * Logging routine.
+     */
+    private static void logMultiplySign() {
+        LOGG.info("Multiply sign introduced unorthodoxically.");
+    }
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="View attribute and related methods. Click on + sign to show.">
     /**
      * View Class object that is set by the implementor.
@@ -35,6 +94,7 @@ public class Facade {
      */
     public static void setView(View aView) {
         view = aView;
+        LOGG.info("View was successfully set.");
     }
 
     /**
@@ -70,11 +130,16 @@ public class Facade {
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Private attributes. Click on + sign to show.">
+    // <editor-fold defaultstate="collapsed" desc="Constructor. Click on + sign to show.">
     /**
-     * Main Equation for calculation using elements and operators. Elements are
-     * base expressions, equations(parentheses), scalars and a singleton memory.
+     * Default constructor for the logger.
      */
+    public Facade() {
+        startLogger();
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Private attributes. Click on + sign to show.">
     private static Equation PRIMARY = new Equation(false);
 
     /**
@@ -123,15 +188,18 @@ public class Facade {
         UNDOCOMANDS.push(PRIMARY);
 
         if (answerNotEmpty()) {
+            logAnswerSelected();
             INPUT.setInput(removeCommas(answer));
         }
 
         if (PRIMARY.nestedLastItemIsExponent()) {
+            logPreviousElementIsExponent();
             PRIMARY.addMemory(PRIMARY.getLastNestedElementItem().evaluate());
             return;
         }
 
-        if (validateNewMemVal()) {
+        if (validateNewVal()) {
+            logNewInputIsValid();
             PRIMARY.addMemory(parseCommas(INPUT.getInput()));
         }
     }
@@ -144,15 +212,18 @@ public class Facade {
         UNDOCOMANDS.push(PRIMARY);
 
         if (answerNotEmpty()) {
+            logAnswerSelected();
             INPUT.setInput(removeCommas(answer));
         }
 
         if (PRIMARY.nestedLastItemIsExponent()) {
+            logPreviousElementIsExponent();
             PRIMARY.addMemory(PRIMARY.getLastNestedElementItem().evaluate());
             return;
         }
 
-        if (validateNewMemVal()) {
+        if (validateNewVal()) {
+            logNewInputIsValid();
             PRIMARY.subtractMemory(parseCommas(INPUT.getInput()));
         }
     }
@@ -194,6 +265,7 @@ public class Facade {
             updateUserDisplay(output);
         } else {// Else there is a pre-existing scalar.
             updateUserDisplay(" ˣ " + output);
+            logMultiplySign();
         }
     }
 
@@ -243,6 +315,7 @@ public class Facade {
         synchMachineDisplay();
 
         if (answerNotEmpty()) {
+            logAnswerSelected();
             INPUT.setInput(removeCommas(answer));
         }
 
@@ -299,27 +372,27 @@ public class Facade {
         synchMachineDisplay();
 
         if (answerNotEmpty()) {
+            logAnswerSelected();
             INPUT.setInput(removeCommas(answer));
         }
 
         if (validateNewVal()) {
+            logNewInputIsValid();
 
             if (PRIMARY.nestedLastItemIsClosedEquation()) {
+                logPreviousElementIsClosedEquation();
                 addMultiplySignAfterLastEquation();
             }
             if (PRIMARY.nestedLastItemIsExponent()) {
+                logPreviousElementIsExponent();
                 addMultiplySignAfterLastExponent();
             }
 
             isCubedOrSquared(isSquared);
             PRIMARY.addInput();
 
-        } else if (PRIMARY.nestedLastItemIsClosedEquation()) {
-
-            isCubedOrSquared(isSquared);
-            addElementExponent(isSquared);
-
-        } else if (PRIMARY.nestedLastItemIsExponent()) {
+        } else if (PRIMARY.nestedLastItemIsClosedEquation()
+                || PRIMARY.nestedLastItemIsExponent()) {
 
             isCubedOrSquared(isSquared);
             addElementExponent(isSquared);
@@ -353,12 +426,14 @@ public class Facade {
         synchMachineDisplay();
 
         if (answerNotEmpty()) {
+            logAnswerSelected();
             INPUT.setInput(removeCommas(answer));
         }
 
         if (verifyNewValueOrSpecificElement()) {
             if (newInputAfterClosedEquation()) {
                 addMultiplySignAfterLastEquation();
+
             }
             if (newInputAfterExponent()) {
                 addMultiplySignAfterLastExponent();
@@ -386,6 +461,7 @@ public class Facade {
         synchMachineDisplay();
 
         if (validateNewVal()) {
+            logNewInputIsValid();
             if (newInputAfterClosedEquation()) {
                 addMultiplySignAfterLastEquation();
             }
@@ -407,13 +483,14 @@ public class Facade {
 
         synchMachineDisplay();
 
-        if (!answer.isEmpty() && PRIMARY.itemListIsEmpty()
-                && INPUT.isEmpty()) {
+        if (answerNotEmpty()) {
+            logAnswerSelected();
             INPUT.setInput(removeCommas(answer));
         }
 
         // Verify input exist.
         if (validateNewVal()) {
+            logNewInputIsValid();
             PRIMARY.addInput();
         }
 
@@ -445,9 +522,11 @@ public class Facade {
      */
     public static void updateInput(String latestInput) {
         INPUT.updateInput(latestInput);
+
         if (RemoveAnswerFromDisplay()) {
             setUserDisplay("");
         }
+
         updateUserDisplay(latestInput);
     }
 
@@ -544,45 +623,12 @@ public class Facade {
 
     // <editor-fold defaultstate="collapsed" desc="Core private methods. Click on + sign to show.">
     /**
-     * Trim display data as needed to return value only.
-     *
-     * @return value substring of user display
-     */
-    private static String getCleanString() {
-        synchMachineDisplay();
-
-        String cleanString;
-
-        // Find index of space before value.
-        int index = displayText.lastIndexOf(" ");
-        // Take everything after index.
-        cleanString = displayText.substring(index + 1);
-        // Remove open bracket if exists then return.
-        return cleanString.replace("(", "");
-    }
-
-    /**
      * Validate user/machine input.
      *
      * @return boolean
      */
     private static boolean validateNewVal() {
         return (!INPUT.isEmpty());
-    }
-
-    /**
-     * Validate user/machine memory input.
-     *
-     * @return boolean
-     */
-    private static boolean validateNewMemVal() {
-        if (!INPUT.isEmpty()) {
-            return true;
-        } else {
-            JOptionPane.showMessageDialog(null, "There is no value to use.",
-                    "Missing value", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
     }
 
     /**
@@ -710,6 +756,7 @@ public class Facade {
         displayText = displayText.substring(0, tmp);
         displayText = displayText.concat(" ˣ (");
         setUserDisplay(displayText);
+        logMultiplySign();
     }
 
     /**
@@ -722,6 +769,7 @@ public class Facade {
         displayText = displayText.substring(0, tmp);
         displayText = displayText.concat(") ˣ " + newinput);
         setUserDisplay(displayText);
+        logMultiplySign();
     }
 
     /**
@@ -743,6 +791,7 @@ public class Facade {
             // Concatenate with multiply sign in between input and display text.
             setUserDisplay(displayText.concat(" ˣ " + newinput));
         }
+        logMultiplySign();
     }
 
     /**
