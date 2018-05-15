@@ -1,6 +1,7 @@
 package model.exponent;
 
 import model.Element;
+import model.Equation;
 
 /**
  * Leaf class of the math composite.
@@ -8,6 +9,11 @@ import model.Element;
  * @author Muhammad Diallo Thomas - muhammaddiallo.thomas@gmail.com
  */
 public class Squared implements Exponent {
+
+    /**
+     * Superscript.
+     */
+    public static final String SUPERSCRIPT = "²";
 
     // <editor-fold defaultstate="collapsed" desc="Private attributes. Click on + sign to show.">
     /**
@@ -57,9 +63,10 @@ public class Squared implements Exponent {
     @Override
     public String toString() {
         if (!(element.getClass().getInterfaces()[0].equals(Exponent.class))) {
-            return element.toString() + "²";
+            return element.toString() + SUPERSCRIPT;
         }
-        return "(" + element.toString().trim() + ")" + "²";
+        return Equation.OPNBRKT + element.toString().trim() + Equation.CLSBRKT
+                + SUPERSCRIPT;
     }
     // </editor-fold>
 

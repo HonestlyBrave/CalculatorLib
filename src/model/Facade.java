@@ -264,7 +264,7 @@ public class Facade {
                 || PRIMARY.nestedLastItemIsClosedEquation()) {
             updateUserDisplay(output);
         } else {// Else there is a pre-existing scalar.
-            updateUserDisplay(" ˣ " + output);
+            updateUserDisplay(Multiply.OPERATOR + output);
             logMultiplySign();
         }
     }
@@ -341,19 +341,21 @@ public class Facade {
         switch (op) {
             case 1:
                 PRIMARY.addItem(new Add());
-                updateUserDisplay(" + ");
+                updateUserDisplay(Add.OPERATOR);
                 break;
             case 2:
                 PRIMARY.addItem(new Subtract());
-                updateUserDisplay(" - ");
+                updateUserDisplay(Subtract.OPERATOR);
                 break;
             case 3:
                 PRIMARY.addItem(new Multiply());
-                updateUserDisplay(" ˣ ");
+                updateUserDisplay(Multiply.OPERATOR);
+                break;
+            case 4:
+                PRIMARY.addItem(new Divide());
+                updateUserDisplay(Divide.OPERATOR);
                 break;
             default:
-                PRIMARY.addItem(new Divide());
-                updateUserDisplay(" ÷ ");
                 break;
         }
         return true;
@@ -404,11 +406,11 @@ public class Facade {
         synchMachineDisplay();
 
         if (isSquared) {
-            if (!displayText.trim().endsWith("²")) {
+            if (!displayText.trim().endsWith(Squared.SUPERSCRIPT)) {
                 updateUserDisplay(output);
             }
         } else {
-            if (!displayText.trim().endsWith("³")) {
+            if (!displayText.trim().endsWith(Cubed.SUPERSCRIPT)) {
                 updateUserDisplay(output);
             }
         }
@@ -419,7 +421,7 @@ public class Facade {
      * Check for valid Scalar then add new Equation to primary Equation.
      */
     public static void openParentheses() {
-        updateUserDisplay("(");
+        updateUserDisplay(Equation.OPNBRKT);
         // Save state for undo
         UNDOCOMANDS.push(PRIMARY);
 
@@ -470,7 +472,7 @@ public class Facade {
         }
 
         PRIMARY.closeEquation();
-        updateUserDisplay(")");
+        updateUserDisplay(Equation.CLSBRKT);
         return true;
     }
 
@@ -752,9 +754,9 @@ public class Facade {
      */
     private static void addMultiplySignAfterInput() {
         synchMachineDisplay();
-        int tmp = displayText.lastIndexOf("(");
+        int tmp = displayText.lastIndexOf(Equation.OPNBRKT);
         displayText = displayText.substring(0, tmp);
-        displayText = displayText.concat(" ˣ (");
+        displayText = displayText.concat(Multiply.OPERATOR + Equation.OPNBRKT);
         setUserDisplay(displayText);
         logMultiplySign();
     }
@@ -764,10 +766,11 @@ public class Facade {
      */
     private static void addMultiplySignAfterLastEquation() {
         synchMachineDisplay();
-        int tmp = displayText.lastIndexOf(")");
+        int tmp = displayText.lastIndexOf(Equation.CLSBRKT);
         String newinput = displayText.substring(tmp + 1);
         displayText = displayText.substring(0, tmp);
-        displayText = displayText.concat(") ˣ " + newinput);
+        displayText = displayText.concat(Equation.CLSBRKT + Multiply.OPERATOR
+                + newinput);
         setUserDisplay(displayText);
         logMultiplySign();
     }
@@ -779,8 +782,8 @@ public class Facade {
         synchMachineDisplay();
 
         // Select last existing superscript.
-        int tmp2 = displayText.lastIndexOf("²");
-        int tmp3 = displayText.lastIndexOf("³");
+        int tmp2 = displayText.lastIndexOf(Squared.SUPERSCRIPT);
+        int tmp3 = displayText.lastIndexOf(Cubed.SUPERSCRIPT);
         int tmp = tmp2 > tmp3 ? tmp2 : tmp3;
 
         // If superscript exist,
@@ -789,7 +792,7 @@ public class Facade {
             String newinput = displayText.substring(tmp + 1);
             displayText = displayText.substring(0, tmp + 1);
             // Concatenate with multiply sign in between input and display text.
-            setUserDisplay(displayText.concat(" ˣ " + newinput));
+            setUserDisplay(displayText.concat(Multiply.OPERATOR + newinput));
         }
         logMultiplySign();
     }
@@ -821,10 +824,10 @@ public class Facade {
     private static void isCubedOrSquared(boolean isSquared) {
         if (isSquared) {
             PRIMARY.activateSquare();
-            output = "²";
+            output = Squared.SUPERSCRIPT;
         } else {
             PRIMARY.activateCube();
-            output = "³";
+            output = Cubed.SUPERSCRIPT;
         }
     }
 

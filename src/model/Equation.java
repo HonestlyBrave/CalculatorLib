@@ -85,6 +85,16 @@ public class Equation implements Element {
     }
     // </editor-fold>
 
+    /**
+     * Brackets.
+     */
+    public static final String OPNBRKT = "(";
+
+    /**
+     * Brackets.
+     */
+    public static final String CLSBRKT = ")";
+
     // <editor-fold defaultstate="collapsed" desc="Private attributes. Click on + sign to show.">
     /**
      * List of items within this Equation(parentheses).
@@ -499,7 +509,7 @@ public class Equation implements Element {
         String output = "";
 
         if (isNested) {
-            output += "(";
+            output += OPNBRKT;
         }
 
         for (Object obj : EQUATIONITEMS) {
@@ -509,7 +519,7 @@ public class Equation implements Element {
         }
 
         if (isNested) {
-            output += ")";
+            output += CLSBRKT;
         }
 
         return output;
