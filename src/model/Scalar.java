@@ -1,7 +1,5 @@
 package model;
 
-import java.text.DecimalFormat;
-
 /**
  * Leaf class of the math composite.
  *
@@ -14,11 +12,6 @@ public class Scalar implements Element {
      * Number to be evaluated.
      */
     private final double number;
-
-    /**
-     * Use commas as separator and eliminate extra zeros after decimal.
-     */
-    private final DecimalFormat FINE = new DecimalFormat("");
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructor. Click on + sign to show.">
@@ -44,7 +37,7 @@ public class Scalar implements Element {
      */
     @Override
     public String toString() {
-        return FINE.format(number);
+        return CalcFormat.format(number);
     }
     // </editor-fold>
 }

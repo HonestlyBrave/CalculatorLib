@@ -2,15 +2,13 @@ package model;
 
 import command.Command;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import model.exponent.Cubed;
-import model.exponent.Squared;
+import model.exponent.*;
 import model.operator.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -172,11 +170,6 @@ public class Facade {
      * and item lists.
      */
     private static final Deque<Object> UNDOCOMANDS = new ArrayDeque<>();
-
-    /**
-     * Use commas as separator and eliminate extra zeros after decimal.
-     */
-    private static final DecimalFormat FINE = new DecimalFormat("");
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Core public methods. Click on + sign to show.">
@@ -507,7 +500,7 @@ public class Facade {
             return;
         }
         // Evaluate the last element.
-        answer = FINE.format(PRIMARY.evaluate());
+        answer = CalcFormat.format(PRIMARY.evaluate());
 
         // Update display with complete expression and result.
         setUserDisplay(PRIMARY.toString() + " = " + answer);
@@ -523,6 +516,11 @@ public class Facade {
      * @param latestInput literal user input
      */
     public static void updateInput(String latestInput) {
+        // Limit user input to 15 digits.
+        if (INPUT.getInput().length() >= 15) {
+            return;
+        }
+
         INPUT.updateInput(latestInput);
 
         if (RemoveAnswerFromDisplay()) {

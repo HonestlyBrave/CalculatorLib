@@ -1,7 +1,5 @@
 package model;
 
-import java.text.DecimalFormat;
-
 /**
  * Singleton class to manage memory.
  *
@@ -30,11 +28,6 @@ public class Memory implements Element {
      * Current value stored in memory.
      */
     private double currentValue;
-
-    /**
-     * Use commas as separator and eliminate extra zeros after decimal.
-     */
-    private final DecimalFormat FINE;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Private constructor. Click on + sign to show.">
@@ -44,7 +37,6 @@ public class Memory implements Element {
      */
     private Memory() {
         this.currentValue = 0;
-        this.FINE = new DecimalFormat("");
     }
     // </editor-fold>
 
@@ -82,7 +74,7 @@ public class Memory implements Element {
      * @return value as string
      */
     public String toString() {
-        return FINE.format(currentValue);
+        return CalcFormat.format(currentValue);
     }
     // </editor-fold>
 }

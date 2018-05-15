@@ -7,9 +7,7 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import model.exponent.Cubed;
-import model.exponent.Exponent;
-import model.exponent.Squared;
+import model.exponent.*;
 import model.operator.*;
 
 /**
