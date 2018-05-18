@@ -32,7 +32,8 @@ public class Equation implements Element {
     private void startLogger() {
         LOGG.setLevel(Level.ALL);
         try {
-            LOGG.addHandler(new FileHandler());
+            FileHandler saveLog = new FileHandler("equation.log", true);
+            LOGG.addHandler(saveLog);
         } catch (IOException | SecurityException ex) {
             LOGG.log(Level.SEVERE, null, ex);
         }
