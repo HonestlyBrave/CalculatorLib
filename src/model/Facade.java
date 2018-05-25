@@ -1,6 +1,7 @@
 package model;
 
 import command.Command;
+import factory.OperatorFactory;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -332,26 +333,10 @@ public class Facade {
             }
         }
 
-        switch (op) {
-            case 1:
-                PRIMARY.addItem(new Add());
-                updateUserDisplay(Add.OPERATOR);
-                break;
-            case 2:
-                PRIMARY.addItem(new Subtract());
-                updateUserDisplay(Subtract.OPERATOR);
-                break;
-            case 3:
-                PRIMARY.addItem(new Multiply());
-                updateUserDisplay(Multiply.OPERATOR);
-                break;
-            case 4:
-                PRIMARY.addItem(new Divide());
-                updateUserDisplay(Divide.OPERATOR);
-                break;
-            default:
-                break;
-        }
+        Operator newOperator = OperatorFactory.getOperator(op, view);
+
+        PRIMARY.addItem(newOperator);
+
         return true;
     }
 
