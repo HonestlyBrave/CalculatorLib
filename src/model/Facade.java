@@ -1,7 +1,7 @@
 package model;
 
 import command.Command;
-import factory.OperatorFactory;
+import factory.*;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -140,7 +140,7 @@ public class Facade {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Private attributes. Click on + sign to show.">
-    private static Equation PRIMARY = new Equation(false);
+    private static Equation PRIMARY = EquationFactory.createEquation(false);
 
     /**
      * Machine equivalent of actual display.
@@ -290,7 +290,7 @@ public class Facade {
         answer = "";
 
         // New primary calculation.
-        PRIMARY = new Equation(false);
+        PRIMARY = EquationFactory.createEquation(false);
         setUserDisplay("");
     }
 
@@ -333,7 +333,7 @@ public class Facade {
             }
         }
 
-        Operator newOperator = OperatorFactory.getOperator(op, view);
+        Operator newOperator = OperatorFactory.createOperator(op, view);
 
         PRIMARY.addItem(newOperator);
 
@@ -369,13 +369,13 @@ public class Facade {
                 addMultiplySignAfterLastExponent();
             }
 
-            isCubedOrSquared(isSquared);
+            activateExponent_SetOutput(isSquared);
             PRIMARY.addInput();
 
         } else if (PRIMARY.nestedLastItemIsClosedEquation()
                 || PRIMARY.nestedLastItemIsExponent()) {
 
-            isCubedOrSquared(isSquared);
+            activateExponent_SetOutput(isSquared);
             addElementExponent(isSquared);
 
         } else {
@@ -424,7 +424,7 @@ public class Facade {
             addMultiplySignAfterInput();
         }
 
-        PRIMARY.addItem(new Equation());
+        PRIMARY.addItem(EquationFactory.createEquation());
     }
 
     /**
@@ -492,7 +492,7 @@ public class Facade {
         setUserDisplay(PRIMARY.toString() + " = " + answer);
 
         // Clear main equation.
-        PRIMARY = new Equation(false);
+        PRIMARY = EquationFactory.createEquation(false);
         INPUT.setInput("");
     }
 
@@ -805,7 +805,7 @@ public class Facade {
      *
      * @param isSquared
      */
-    private static void isCubedOrSquared(boolean isSquared) {
+    private static void activateExponent_SetOutput(boolean isSquared) {
         if (isSquared) {
             PRIMARY.activateSquare();
             output = Squared.SUPERSCRIPT;
@@ -825,9 +825,14 @@ public class Facade {
 
         PRIMARY.removeLastElement();
         if (isSquared) {
-            PRIMARY.addItem(new Squared(tmpElement));
+            Squared tmp = (Squared) ExponentFactory
+                    .createExponent(2, tmpElement);
+            PRIMARY.addItem(tmp);
         } else {
-            PRIMARY.addItem(new Cubed(tmpElement));
+            Cubed tmp = (Cubed) ExponentFactory
+                    .createExponent(3, tmpElement);
+            PRIMARY.addItem(tmp);
+
         }
         synchMachineDisplay();
         view.setDisplay(PRIMARY.toString());

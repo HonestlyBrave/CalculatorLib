@@ -1,5 +1,6 @@
 package model;
 
+import factory.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -197,7 +198,7 @@ public class Equation implements Element {
 
         if (!this.hasOpenEquation) {
             if (isSolvable()) {
-                EQUATIONITEMS.add(new Multiply());
+                EQUATIONITEMS.add(OperatorFactory.createOperator(3));
                 logMultiplySign();
                 this.opCount++;
                 logOpCount();
@@ -246,7 +247,7 @@ public class Equation implements Element {
 
         if (!this.hasOpenEquation) {
             if (isSolvable()) {
-                EQUATIONITEMS.add(new Multiply());
+                EQUATIONITEMS.add(OperatorFactory.createOperator(3));
                 logMultiplySign();
                 this.opCount++;
                 logOpCount();
@@ -297,7 +298,7 @@ public class Equation implements Element {
 
         if (!this.hasOpenEquation) {
             if (isSolvable()) {
-                EQUATIONITEMS.add(new Multiply());
+                EQUATIONITEMS.add(OperatorFactory.createOperator(3));
                 logMultiplySign();
                 this.opCount++;
                 logOpCount();
@@ -371,7 +372,7 @@ public class Equation implements Element {
 
         if (!this.hasOpenEquation) {
             if (isSolvable()) {
-                EQUATIONITEMS.add(new Multiply());
+                EQUATIONITEMS.add(OperatorFactory.createOperator(3));
                 logMultiplySign();
                 this.opCount++;
                 logOpCount();
@@ -400,19 +401,25 @@ public class Equation implements Element {
             input.setInput("");
             return false;
         }
-        Scalar tmpScalar = new Scalar(parseInput());
+        Scalar tmpScalar = ScalarFactory.createScalar(parseInput());
         LOGG.info("Input converted to Scalar.");
 
-        if (nestedEquationSquaredActive()) {
-            addItem(new Squared(tmpScalar));
-            LOGG.info("Input converted to Squared and added successfully.");
-            input.setInput("");
-            return true;
-        }
+        if (nestedEquationExponentActive()) {
+            String logtxt;
 
-        if (nestedEquationCubedActive()) {
-            addItem(new Cubed(tmpScalar));
-            LOGG.info("Input converted to Cubed and added successfully.");
+            if (nestedEquationSquaredActive()) {
+                Squared tmp = (Squared) ExponentFactory
+                        .createExponent(2, tmpScalar);
+                addItem(tmp);
+                logtxt = "Input converted to Squared and added successfully.";
+            } else {
+                Cubed tmp = (Cubed) ExponentFactory
+                        .createExponent(3, tmpScalar);
+                addItem(tmp);
+                logtxt = "Input converted to Cubed and added successfully.";
+            }
+
+            LOGG.info(logtxt);
             input.setInput("");
             return true;
         }
@@ -675,6 +682,15 @@ public class Equation implements Element {
     }
 
     /**
+     * Verify whether any exponent active in nested equation.
+     *
+     * @return boolean
+     */
+    public boolean nestedEquationExponentActive() {
+        return (nestedEquationSquaredActive() || nestedEquationCubedActive());
+    }
+
+    /**
      * True if the Equation's item list is empty.
      *
      * @return boolean
@@ -912,9 +928,10 @@ public class Equation implements Element {
      */
     private void calculate(int index, List<Object> list) {
         LOGG.info("Calculating...");
-        BaseExpression tmp = new BaseExpression((Element) list
-                .get(index - 1), (Operator) list.get(index),
-                (Element) list.get(index + 1));
+        BaseExpression tmp = (BaseExpression) ExpressionFactory
+                .createExpression((Element) list.get(index - 1),
+                        (Operator) list.get(index),
+                        (Element) list.get(index + 1));
 
         list.add(index - 1, tmp);
         list.remove(index);

@@ -1,10 +1,6 @@
 package factory;
 
-import model.operator.Add;
-import model.operator.Divide;
-import model.operator.Multiply;
-import model.operator.Operator;
-import model.operator.Subtract;
+import model.operator.*;
 import view.View;
 
 /**
@@ -13,7 +9,7 @@ import view.View;
  */
 public class OperatorFactory {
 
-    public static Operator getOperator(int op, View view) {
+    public static Operator createOperator(int op, View view) {
 
         switch (op) {
             case 1:
@@ -31,5 +27,24 @@ public class OperatorFactory {
             default:
                 return null;
         }
+
     }
+
+    public static Operator createOperator(int op) {
+
+        switch (op) {
+            case 1:
+                return new Add();
+            case 2:
+                return new Subtract();
+            case 3:
+                return new Multiply();
+            case 4:
+                return new Divide();
+            default:
+                return null;
+        }
+
+    }
+
 }
