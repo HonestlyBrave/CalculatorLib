@@ -489,6 +489,7 @@ public class Facade {
         answer = CalcFormat.format(PRIMARY.evaluate());
 
         // Update display with complete expression and result.
+        LOGG.info("Displaying answer...");
         setUserDisplay(PRIMARY.toString() + " = " + answer);
 
         // Clear main equation.
