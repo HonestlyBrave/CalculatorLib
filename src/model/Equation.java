@@ -44,35 +44,39 @@ public class Equation implements Element {
      * Logging routine.
      */
     private void logEleCount() {
-        LOGG.log(Level.INFO, "Operands has increase by 1.", eleCount);
+        LOGG.log(Level.FINER, "Operands has increase by 1. Current : {0}",
+                eleCount);
     }
 
     /**
      * Logging routine.
      */
     private void logOpCount() {
-        LOGG.log(Level.INFO, "Operators has increase by 1.", opCount);
+        LOGG.log(Level.FINER, "Operators has increase by 1. Current : {0}",
+                opCount);
     }
 
     /**
      * Logging routine.
      */
-    private void logSquaredActive() {
-        LOGG.info("Squared active flag disabled.");
+    private void logDisableSquaredActive() {
+        LOGG.log(Level.FINER, "Squared active flag disabled. "
+                + "Status : {0}", squaredActive);
     }
 
     /**
      * Logging routine.
      */
-    private void logCubedActive() {
-        LOGG.info("Cubed active flag disabled.");
+    private void logDisableCubedActive() {
+        LOGG.log(Level.FINER, "Cubed active flag disabled."
+                + "Status : {0}", cubedActive);
     }
 
     /**
      * Logging routine.
      */
     private void logMultiplySign() {
-        LOGG.info("Multiply operator element introduced.");
+        LOGG.finer("Multiply operator added manually to item list.");
     }
 
     /**
@@ -81,7 +85,7 @@ public class Equation implements Element {
      * @param text
      */
     private void logLooking4ActiveEquation(String text) {
-        LOGG.info(text);
+        LOGG.finest(text);
     }
     // </editor-fold>
 
@@ -191,8 +195,8 @@ public class Equation implements Element {
             this.eleCount++;
             logEleCount();
             this.hasFirstOperand = true;
-            LOGG.log(Level.INFO, "Scalar added successfully to item list.",
-                    EQUATIONITEMS);
+            LOGG.log(Level.INFO, "Scalar added to item list. "
+                    + "Current items : {0}", EQUATIONITEMS);
             return;
         }
 
@@ -211,6 +215,8 @@ public class Equation implements Element {
                 logEleCount();
                 this.hasFirstOperand = true;
             }
+            LOGG.log(Level.INFO, "Scalar added to item list. "
+                    + "Current items : {0}", EQUATIONITEMS);
 
         } else if (lastIsEquation()) {
             getLastEquationItem().addItem(scalar);
@@ -221,10 +227,7 @@ public class Equation implements Element {
             JOptionPane.showMessageDialog(null,
                     "There is a missing operator.",
                     "Missig Operator", JOptionPane.ERROR_MESSAGE);
-            return;
         }
-        LOGG.log(Level.INFO, "Scalar added successfully to item list.",
-                EQUATIONITEMS);
     }
 
     /**
@@ -239,9 +242,9 @@ public class Equation implements Element {
             logEleCount();
             this.hasFirstOperand = true;
             this.squaredActive = false;
-            logSquaredActive();
-            LOGG.log(Level.INFO, "Squared added successfully to item list.",
-                    EQUATIONITEMS);
+            logDisableSquaredActive();
+            LOGG.log(Level.INFO, "Squared added to item list. "
+                    + "Current items : {0}", EQUATIONITEMS);
             return;
         }
 
@@ -261,7 +264,9 @@ public class Equation implements Element {
             }
             this.hasFirstOperand = true;
             this.squaredActive = false;
-            logSquaredActive();
+            logDisableSquaredActive();
+            LOGG.log(Level.INFO, "Squared added to item list. "
+                    + "Current items : {0}", EQUATIONITEMS);
 
         } else if (lastIsEquation()) {
             getLastEquationItem().addItem(squared);
@@ -272,10 +277,7 @@ public class Equation implements Element {
             JOptionPane.showMessageDialog(null,
                     "There is a missing operator.",
                     "Missig Operator", JOptionPane.ERROR_MESSAGE);
-            return;
         }
-        LOGG.log(Level.INFO, "Squared added successfully to item list.",
-                EQUATIONITEMS);
     }
 
     /**
@@ -290,9 +292,9 @@ public class Equation implements Element {
             logEleCount();
             this.hasFirstOperand = true;
             this.cubedActive = false;
-            logCubedActive();
-            LOGG.log(Level.INFO, "Cubed added successfully to item list.",
-                    EQUATIONITEMS);
+            logDisableCubedActive();
+            LOGG.log(Level.INFO, "Cubed added to item list. "
+                    + "Current items : {0}", EQUATIONITEMS);
             return;
         }
 
@@ -312,7 +314,9 @@ public class Equation implements Element {
             }
             this.hasFirstOperand = true;
             this.cubedActive = false;
-            logCubedActive();
+            logDisableCubedActive();
+            LOGG.log(Level.INFO, "Cubed added to item list. "
+                    + "Current items : {0}", EQUATIONITEMS);
 
         } else if (lastIsEquation()) {
             getLastEquationItem().addItem(cubed);
@@ -323,10 +327,7 @@ public class Equation implements Element {
             JOptionPane.showMessageDialog(null,
                     "There is a missing operator.",
                     "Missig Operator", JOptionPane.ERROR_MESSAGE);
-            return;
         }
-        LOGG.log(Level.INFO, "Cubed added successfully to item list.",
-                EQUATIONITEMS);
     }
 
     /**
@@ -351,9 +352,10 @@ public class Equation implements Element {
             getLastEquationItem().addItem(operator);
             logLooking4ActiveEquation(
                     "Entering nested Equation to add new Element.");
+            return;
         }
-        LOGG.log(Level.INFO, "Operator added successfully to item list.",
-                EQUATIONITEMS);
+        LOGG.log(Level.INFO, "Operator added to item list. "
+                + "Current items : {0}", EQUATIONITEMS);
     }
 
     /**
@@ -365,8 +367,8 @@ public class Equation implements Element {
         if (itemListIsEmpty()) {
             EQUATIONITEMS.add(equation);
             this.hasOpenEquation = true;
-            LOGG.log(Level.INFO, "Equation added successfully to item list.",
-                    EQUATIONITEMS);
+            LOGG.log(Level.INFO, "Equation added to item list. "
+                    + "Current items : {0}", EQUATIONITEMS);
             return;
         }
 
@@ -385,9 +387,10 @@ public class Equation implements Element {
             getLastEquationItem().addItem(equation);
             logLooking4ActiveEquation(
                     "Entering nested Equation to add new Element.");
+            return;
         }
-        LOGG.log(Level.INFO, "Equation added successfully to item list.",
-                EQUATIONITEMS);
+        LOGG.log(Level.INFO, "Equation added to item list. "
+                + "Current items : {0}", EQUATIONITEMS);
     }
 
     /**
@@ -402,7 +405,7 @@ public class Equation implements Element {
             return false;
         }
         Scalar tmpScalar = ScalarFactory.createScalar(parseInput());
-        LOGG.info("Input converted to Scalar.");
+        LOGG.finer("Input converted to Scalar.");
 
         if (nestedEquationExponentActive()) {
             String logtxt;
@@ -411,21 +414,25 @@ public class Equation implements Element {
                 Squared tmp = (Squared) ExponentFactory
                         .createExponent(2, tmpScalar);
                 addItem(tmp);
-                logtxt = "Input converted to Squared and added successfully.";
+                logtxt = "Scalar Input converted to Squared"
+                        + " and added successfully to item list.";
             } else {
                 Cubed tmp = (Cubed) ExponentFactory
                         .createExponent(3, tmpScalar);
                 addItem(tmp);
-                logtxt = "Input converted to Cubed and added successfully.";
+                logtxt = "ScalarInput converted to Cubed"
+                        + " and added successfully to item list.";
             }
 
-            LOGG.info(logtxt);
+            LOGG.log(Level.FINEST, logtxt + " Current items : {0}",
+                    EQUATIONITEMS);
             input.setInput("");
             return true;
         }
 
         addItem(tmpScalar);
-        LOGG.info("Input added successfully.");
+        LOGG.log(Level.FINEST, "Scalar added successfully to item list. "
+                + "Current items : {0}", EQUATIONITEMS);
         input.setInput("");
         return true;
     }
@@ -537,12 +544,12 @@ public class Equation implements Element {
     public void activateSquare() {
         if (!hasOpenEquation) {
             this.squaredActive = true;
-            LOGG.log(Level.INFO, "The is Squared flag is enabled.",
+            LOGG.log(Level.FINER, "The Squared flag is enabled. Status : {0}",
                     squaredActive);
         } else {
             getLastEquationItem().activateSquare();
             logLooking4ActiveEquation(
-                    "Entering nested Equation to activate is Squared flag.");
+                    "Entering nested Equation to activate Squared flag.");
         }
     }
 
@@ -552,11 +559,12 @@ public class Equation implements Element {
     public void activateCube() {
         if (!hasOpenEquation) {
             this.cubedActive = true;
-            LOGG.log(Level.INFO, "The is Cubed flag is enabled.", cubedActive);
+            LOGG.log(Level.FINER, "The Cubed flag is enabled. Status : {0}",
+                    cubedActive);
         } else {
             getLastEquationItem().activateCube();
             logLooking4ActiveEquation(
-                    "Entering nested Equation to activate is Cubed flag.");
+                    "Entering nested Equation to activate Cubed flag.");
         }
     }
 
@@ -711,9 +719,11 @@ public class Equation implements Element {
         }
 
         EQUATIONITEMS.remove(getLastNestedElementItem());
-        LOGG.log(Level.INFO, "Last Element removed.", EQUATIONITEMS);
+        LOGG.log(Level.INFO, "Last Element removed. "
+                + "Current items : {0}", EQUATIONITEMS);
         this.eleCount -= 1;
-        LOGG.log(Level.INFO, "The number of operands has decreased.", eleCount);
+        LOGG.log(Level.FINER, "The number of operands has decreased. "
+                + "Current : {0}", eleCount);
     }
 
     /**
@@ -741,7 +751,8 @@ public class Equation implements Element {
      * @return boolean
      */
     private boolean isSolvable() {
-        LOGG.info("Calculating solvability...");
+        LOGG.log(Level.FINER, "Calculating solvability...{0}", (this.eleCount
+                == this.opCount + 1));
         return this.eleCount == this.opCount + 1;
     }
 
@@ -760,7 +771,7 @@ public class Equation implements Element {
      * @return Equation
      */
     private Equation getLastEquationItem() {
-        LOGG.info("Casting last Element object to Equation Element...");
+        LOGG.finest("Casting last Element object to Equation Element...");
         return (Equation) getLastItem();
     }
 
@@ -770,7 +781,7 @@ public class Equation implements Element {
      * @return Element
      */
     public Element getLastNestedElementItem() {
-        LOGG.info("Casting last Element object to Composite Element...");
+        LOGG.finer("Casting last Element object to Composite Element...");
         if (this.hasOpenEquation) {
             logLooking4ActiveEquation(
                     "Entering nested Equation to retrieve the last Composite Element.");
@@ -859,7 +870,7 @@ public class Equation implements Element {
      * @return an Equation's last list item
      */
     private Object getLastItem() {
-        LOGG.info("Retrieving last Element...");
+        LOGG.finest("Retrieving last Element...");
         if (itemListIsEmpty()) {
             return null;
         }
@@ -872,7 +883,7 @@ public class Equation implements Element {
      * @return double
      */
     private double parseInput() {
-        LOGG.info("Parsing...");
+        LOGG.finest("Parsing...");
         return Double.parseDouble(input.getInput().replaceAll(",", ""));
     }
 
@@ -883,7 +894,7 @@ public class Equation implements Element {
      * @return boolean
      */
     private boolean calculateMultiplyDivide(List<Object> itemList) {
-        LOGG.info("Calculating Multiply or Divide...");
+        LOGG.finest("Calculating Multiply or Divide...");
         for (Object obj : itemList) {
             if (obj.getClass().equals(Multiply.class)
                     || obj.getClass().equals(Divide.class)) {
@@ -905,7 +916,7 @@ public class Equation implements Element {
      * @return boolean
      */
     private boolean calculateAddSubtract(List<Object> itemList) {
-        LOGG.info("Calculating Add or Subtract...");
+        LOGG.finest("Calculating Add or Subtract...");
         for (Object obj : itemList) {
             if (obj.getClass().equals(Add.class)
                     || obj.getClass().equals(Subtract.class)) {
@@ -927,7 +938,7 @@ public class Equation implements Element {
      * @param list
      */
     private void calculate(int index, List<Object> list) {
-        LOGG.info("Calculating...");
+        LOGG.finest("Simplfying...");
         BaseExpression tmp = (BaseExpression) ExpressionFactory
                 .createExpression((Element) list.get(index - 1),
                         (Operator) list.get(index),

@@ -37,7 +37,7 @@ public class ExponentFactory {
      * Logging routine.
      */
     private static void logExponentCreation() {
-        LOGG.info("Creating Exponent...");
+        LOGG.finest("Creating Exponent...");
     }
     // </editor-fold>
 

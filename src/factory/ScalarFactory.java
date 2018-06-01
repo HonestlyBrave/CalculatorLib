@@ -36,7 +36,7 @@ public class ScalarFactory {
      * Logging routine.
      */
     private static void logScalarCreation() {
-        LOGG.info("Creating Scalar...");
+        LOGG.finest("Creating Scalar...");
     }
     // </editor-fold>
 

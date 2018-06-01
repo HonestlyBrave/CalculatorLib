@@ -83,7 +83,7 @@ public class Input {
     public void setInput(String newInput) {
         currentInput = newInput;
         if (newInput.equals("")) {
-            LOGG.info("Input reset to empty string.");
+            LOGG.finest("Input reset to empty string.");
         }
     }
 

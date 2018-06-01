@@ -54,7 +54,7 @@ public class Facade {
      * Logging routine.
      */
     private static void logNewInputIsValid() {
-        LOGG.info("New value for Input is valid.");
+        LOGG.finest("New value for Input is valid.");
     }
 
     /**
@@ -74,9 +74,12 @@ public class Facade {
 
     /**
      * Logging routine.
+     *
+     * @param text
      */
-    private static void logMultiplySign() {
-        LOGG.info("Multiply sign introduced unorthodoxically.");
+    private static void logMultiplySign(String text) {
+        LOGG.log(Level.FINER, "Multiply sign introduced manually after {0}.",
+                text);
     }
     // </editor-fold>
 
@@ -260,7 +263,7 @@ public class Facade {
             updateUserDisplay(output);
         } else {// Else there is a pre-existing scalar.
             updateUserDisplay(Multiply.OPERATOR + output);
-            logMultiplySign();
+            logMultiplySign("Memory Recall");
         }
     }
 
@@ -288,6 +291,7 @@ public class Facade {
         INPUT.setInput("");
         output = "";
         answer = "";
+        LOGG.info("CLEARED!");
 
         // New primary calculation.
         PRIMARY = EquationFactory.createEquation(false);
@@ -487,9 +491,11 @@ public class Facade {
         }
         // Evaluate the last element.
         answer = CalcFormat.format(PRIMARY.evaluate());
+        LOGG.log(Level.INFO, "Answer successfully calculated. Answer : {0}",
+                answer);
 
         // Update display with complete expression and result.
-        LOGG.info("Displaying answer...");
+        LOGG.finest("Displaying answer...");
         setUserDisplay(PRIMARY.toString() + " = " + answer);
 
         // Clear main equation.
@@ -743,7 +749,7 @@ public class Facade {
         displayText = displayText.substring(0, tmp);
         displayText = displayText.concat(Multiply.OPERATOR + Equation.OPNBRKT);
         setUserDisplay(displayText);
-        logMultiplySign();
+        logMultiplySign("Input");
     }
 
     /**
@@ -757,7 +763,7 @@ public class Facade {
         displayText = displayText.concat(Equation.CLSBRKT + Multiply.OPERATOR
                 + newinput);
         setUserDisplay(displayText);
-        logMultiplySign();
+        logMultiplySign("Equation");
     }
 
     /**
@@ -779,7 +785,7 @@ public class Facade {
             // Concatenate with multiply sign in between input and display text.
             setUserDisplay(displayText.concat(Multiply.OPERATOR + newinput));
         }
-        logMultiplySign();
+        logMultiplySign("Exponent");
     }
 
     /**
@@ -822,6 +828,7 @@ public class Facade {
      * @param isSquared
      */
     private static void addElementExponent(boolean isSquared) {
+        String exponent;
         Element tmpElement = PRIMARY.getLastNestedElementItem();
 
         PRIMARY.removeLastElement();
@@ -829,12 +836,17 @@ public class Facade {
             Squared tmp = (Squared) ExponentFactory
                     .createExponent(2, tmpElement);
             PRIMARY.addItem(tmp);
+            exponent = "Squared";
         } else {
             Cubed tmp = (Cubed) ExponentFactory
                     .createExponent(3, tmpElement);
             PRIMARY.addItem(tmp);
-
+            exponent = "Cubed";
         }
+        LOGG.log(Level.FINEST,
+                "Element converted to {0} and added successfully to item list.",
+                exponent);
+
         synchMachineDisplay();
         view.setDisplay(PRIMARY.toString());
     }

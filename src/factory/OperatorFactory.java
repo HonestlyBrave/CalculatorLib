@@ -39,7 +39,7 @@ public class OperatorFactory {
      * @param op
      */
     private static void logOperatorCreation(String op) {
-        LOGG.log(Level.INFO, "Creating {0} Operator...", op);
+        LOGG.log(Level.FINER, "Creating {0} Operator...", op);
     }
     // </editor-fold>
 

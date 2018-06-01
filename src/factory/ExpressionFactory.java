@@ -39,7 +39,7 @@ public class ExpressionFactory {
      * Logging routine.
      */
     private static void logExpressionCreation() {
-        LOGG.info("Creating Base Expression...");
+        LOGG.finest("Creating Base Expression...");
     }
     // </editor-fold>
 
