@@ -462,6 +462,20 @@ public class Equation implements Element {
     }
 
     /**
+     * Close open Equation manually.
+     */
+    public void closeOpenEquation() {
+        if (!getLastEquationItem().isThereAnOpenEquation()) {
+            closeEquation();
+            LOGG.info("Open Equation closed manually.");
+        } else {
+            getLastEquationItem().closeOpenEquation();
+            logLooking4ActiveEquation(
+                    "Entering nested Equation to retrieve the open Equation.");
+        }
+    }
+
+    /**
      * Add to memory value.
      *
      * @param value to be added to current memory value

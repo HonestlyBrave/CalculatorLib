@@ -489,6 +489,12 @@ public class Facade {
             PRIMARY = (Equation) UNDOCOMANDS.pop();
             return;
         }
+
+        // Close open Equation(parentheses) if it is open since it is solvable.
+        if (PRIMARY.isThereAnOpenEquation()) {
+            PRIMARY.closeOpenEquation();
+        }
+
         // Evaluate the last element.
         answer = CalcFormat.format(PRIMARY.evaluate());
         LOGG.log(Level.INFO, "Answer successfully calculated. Answer : {0}",
